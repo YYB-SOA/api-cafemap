@@ -5,9 +5,11 @@ ruby File.read('.ruby-version').strip
 
 # Configuration and Utilities
 gem 'figaro', '~> 1.2'
+gem 'rack-test' # for testing and can also be used to diagnose in production
 gem 'rake', '~> 13.0'
 
 # PRESENTATION LAYER
+gem 'roar', '~> 1.1'
 gem 'slim', '~> 4.1'
 
 # APPLICATION LAYER
@@ -31,10 +33,10 @@ gem 'dry-types', '~> 1'
 gem 'http', '~> 5'
 
 # Database
-# gem 'hirb', '~> 0'
-# gem 'hirb-unicode', '~> 0'
-# gem 'unicode-display_width' ,'~> 1.5'
+gem 'hirb', '~> 0'
+gem 'hirb-unicode', '~> 0'
 gem 'sequel', '~> 5.49'
+gem 'unicode-display_width', '~> 1.5'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'

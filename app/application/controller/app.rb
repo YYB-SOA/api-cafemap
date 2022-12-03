@@ -1,20 +1,15 @@
 # frozen_string_literal: true
 
 require 'roda'
-require 'slim/include'
-require 'descriptive_statistics'
 
 module CafeMap
   # Web App
   class App < Roda
-    plugin :render, engine: 'slim', views: 'app/presentation/views_html'
-    plugin :public, root: 'app/presentation/public'
-    plugin :assets, path: 'app/presentation/assets', css: 'style.css', js: 'table_row.js'
-    plugin :common_logger, $stderr
     plugin :halt
-    plugin :all_verbs
-    plugin :status_handler
     plugin :flash
+    plugin :all_verbs
+    plugin :common_logger, $stderr
+    plugin :status_handler
 
     # use Rack::MethodOverride # allows HTTP verbs beyond GET/POST (e.g., DELETE)
 
@@ -23,26 +18,18 @@ module CafeMap
     end
 
     route do |routing|
-      routing.assets # load CSS
       response['Content-Type'] = 'text/html; charset=utf-8'
-
-      routing.public
 
       # GET /
       routing.root do
-        session[:city] ||= []
+        message = "CafeMap API v1 at /api/v1/ in #{App.environment} mode"
 
-        # Load previously viewed location
-        result = Service::ListCities.new.call
-        if result.failure?
-          flash[:error] = result.failure
-        else
-          cities = result.value!
-          flash.now[:notice] = 'Add a city name to get started' if cities.none?
-          session[:city] = cities.map(&:city)
-        end
+        result_response = Representer::HttpResponse.new(
+          Response::ApiResult.new(status: :ok, message: message)
+        )
 
-        view 'home'
+        response.status = result_response.http_status_code
+        result_response.to_json
       end
 
       routing.on 'region' do
