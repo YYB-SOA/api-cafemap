@@ -22,17 +22,39 @@ module CafeMap
 
       # GET /
       routing.root do
-        message = "CafeMap API v1 at /api/v1/ in #{App.environment} mode"
+        message = "CafeMap API v1 at /region/ in #{App.environment} mode"
 
         result_response = Representer::HttpResponse.new(
-          Response::ApiResult.new(status: :ok, message: message)
+          Response::ApiResult.new(status: :ok, message: message) 
         )
 
         response.status = result_response.http_status_code
         result_response.to_json
       end
 
+      # get /region/city
+
       routing.on 'region' do
+        routing.on String do |city|
+          routing.get do
+            begin
+              filtered_info = CafeMap::Database::InfoOrm.where(city:).all
+              if filtered_info.nil?
+                flash[:error] = 'ArgumentError:nil obj returned. \n -- No cafe shop in the region-- \n'
+                routing.redirect '/'
+              end
+            rescue StandardError => e
+              flash[:error] = "ERROR TYPE: #{e}-- Having trouble accessing database--"
+              routing.redirect '/'
+            end
+
+            # Get Obj array
+            google_data = filtered_info.map(&:store) # datatype question
+            Representer::InfoList.new(filtered_info).to_json
+            Representer::StoreList.new(google_data).to_json
+          end
+        end
+
         routing.is do
           # POST /region/
           routing.post do
@@ -52,7 +74,6 @@ module CafeMap
           routing.delete do
             session[:city].delete(city)
           end
-
           # GET /cafe/region
           routing.get do
             begin
