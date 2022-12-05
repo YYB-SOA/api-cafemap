@@ -10,7 +10,7 @@ module CafeMap
       include Roar::JSON
       include Roar::Hypermedia
       include Roar::Decorator::HypermediaConsumer
-
+      
       property      :infoid
       property      :name
       property      :city

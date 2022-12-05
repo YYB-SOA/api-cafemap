@@ -10,9 +10,12 @@ module CafeMap
     # Represents list of projects for API output
     class InfosList < Roar::Decorator
       include Roar::JSON
+      include Roar::Hypermedia
+      include Roar::Decorator::HypermediaConsumer
 
       collection :infos, extend: Representer::Info,
                          class: OpenStruct
     end
   end
 end
+

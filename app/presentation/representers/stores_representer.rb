@@ -10,6 +10,8 @@ module CafeMap
     # Represents list of projects for API output
     class StoresList < Roar::Decorator
       include Roar::JSON
+      include Roar::Hypermedia
+      include Roar::Decorator::HypermediaConsumer
 
       collection :stores, extend: Representer::Store,
                          class: OpenStruct

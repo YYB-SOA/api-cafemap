@@ -47,11 +47,12 @@ module CafeMap
               flash[:error] = "ERROR TYPE: #{e}-- Having trouble accessing database--"
               routing.redirect '/'
             end
-
+            filtered_info = CafeMap::Database::InfoOrm.where(city:).all
             # Get Obj array
-            google_data = filtered_info.map(&:store) # datatype question
-            Representer::InfoList.new(filtered_info).to_json
-            Representer::StoreList.new(google_data).to_json
+            google_data = filtered_info.map{|x| x.store[0]} 
+            # google_data = filtered_info.map(&:store[]) # datatype question
+            Representer::InfosList.new(filtered_info).to_json
+            Representer::StoresList.new(google_data).to_json
           end
         end
 
