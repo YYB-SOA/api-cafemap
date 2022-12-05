@@ -33,10 +33,13 @@ puts "---------"
 filtered_info = CafeMap::Database::InfoOrm.where(city: "hsinchu").all
 google_data = filtered_info.map{|x| x.store[0]} 
 b = CafeMap::Response::StoreList.new(google_data)
-puts CafeMap::Representer::StoresList.new(b).to_json
-
+store_json =  CafeMap::Representer::StoresList.new(b).to_json
+store_hash =store_json.hash
+puts "store_json:info_id "
+print store_hash#.value.map(&:info_id)
 # a = Struct.new(:info)
 # b = a.new({info: filtered_info})
 # c = CafeMap::Representer::InfosList.new(b).to_json
 # puts c
 # Representer::StoresList.new(google_data).to_json
+
