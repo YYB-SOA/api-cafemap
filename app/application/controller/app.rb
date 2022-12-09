@@ -73,7 +73,7 @@ module CafeMap
             routing.get do
               puts ":city -> #{:city}"
               puts ":routing.params -> #{routing.params['city']}" 
-              city_request = Request.EncodedCityName.new(routing.params)
+              city_request = Request::EncodedCityName.new(routing.params)
               puts ":city_request -> #{city_request}" 
               filtered_info = Service::MiningInfo.new.call(city_request:)
               if filtered_info.failure?

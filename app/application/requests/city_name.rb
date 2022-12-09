@@ -17,7 +17,8 @@ module CafeMap
       # Use in API to parse incoming list requests
       def call
         Success(
-          JSON.parse(decode(@params['city'])) # perhaps should be modify next week
+          # JSON.parse(decode(@params['city'])) # perhaps should be modify next week
+          decode(@params['city']) # perhaps should be modify next week
         )
       rescue StandardError
         Failure(
