@@ -5,7 +5,7 @@ require 'dry/transaction'
 module CafeMap
   module Service
     # Transaction to store cafe data from CafeNomad API to database
-    class AppraiseStore
+    class MiningStore
       include Dry::Transaction
 
       step :validate_city

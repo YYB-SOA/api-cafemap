@@ -4,7 +4,7 @@ require 'base64'
 require 'dry/monads'
 require 'json'
 
-module CodePraise
+module CafeMap
   module Request
     # Project list request parser
     class EncodedCityName

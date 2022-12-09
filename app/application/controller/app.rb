@@ -55,13 +55,13 @@ module CafeMap
           routing.on 'random_store', String do |city|
             # Get /api/v1/cafemap/random_store/{city}
             routing.get do
-              filtered_info = Service::AppraiseInfo.new.call(city)
+              filtered_info = Service::MiningInfo.new.call(city)
               if filtered_info.failure?
                 failed = Representer::HttpResponse.new(filtered_info.failure)
                 routing.halt failed.http_status_code, failed.to_json
               end
               # Get Obj array
-              google_data = Service::AppraiseStore.new.call(city)
+              google_data = Service::MiningStore.new.call(city)
               if filtered_info.failure?
                 failed = Representer::HttpResponse.new(google_data.failure)
                 routing.halt google_data.http_status_code, google_data.to_json
@@ -74,13 +74,13 @@ module CafeMap
             # Get /api/v1/cafemap?city={city}
             routing.get do
               city_request = Request.EncodedCityName.new(routing.params)
-              filtered_info = Service::AppraiseInfo.new.call(city_request:)
+              filtered_info = Service::MiningInfo.new.call(city_request:)
               if filtered_info.failure?
                 failed = Representer::HttpResponse.new(filtered_info.failure)
                 routing.halt failed.http_status_code, failed.to_json
               end
               # Get Obj array
-              google_data = Service::AppraiseStore.new.call(city_request:)
+              google_data = Service::MiningStore.new.call(city_request:)
               if google_data.failure?
                 failed = Representer::HttpResponse.new(google_data.failure)
                 routing.halt google_data.http_status_code, google_data.to_json
