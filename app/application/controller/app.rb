@@ -22,80 +22,73 @@ module CafeMap
 
       # GET /
       routing.root do
-        message = "CafeMap API v1 at /api/v1/ in #{App.environment} mode"
+        message = "CafeMap API v1 at /region/ in #{App.environment} mode"
 
         result_response = Representer::HttpResponse.new(
-          Response::ApiResult.new(status: :ok, message: message)
+          Response::ApiResult.new(status: :ok, message:)
         )
 
         response.status = result_response.http_status_code
         result_response.to_json
       end
 
-      routing.on 'region' do
-        routing.is do
-          # POST /region/
-          routing.post do
-            city_request = Forms::NewCity.new.call(routing.params)
-            info_made = Service::AddCafe.new.call(city_request)
-            if info_made.failure?
-              flash[:error] = info_made.failure
-              routing.redirect '/'
-            end
-            info = info_made.value!
-            session[:city].insert(0, info[1]).uniq!
-            routing.redirect "region/#{info[0].city}"
-          end
-        end
+      # get /region/city
 
-        routing.on String do |city|
-          routing.delete do
-            session[:city].delete(city)
-          end
-
-          # GET /cafe/region
-          routing.get do
-            begin
-              filtered_info = CafeMap::Database::InfoOrm.where(city:).all
-              if filtered_info.nil?
-                flash[:error] = 'ArgumentError:nil obj returned. \n -- No cafe shop in the region-- \n'
-                routing.redirect '/'
+      routing.on 'api/v1' do
+        # routing.on 'map' do
+        #   routing.get do
+        #     result = CafeMap::Service::AppraiseCafe.new.call
+        #     if result.failure?
+        #       flash[:error] = result.failure
+        #     else
+        #       infos_data = result.value!
+        #     end
+        #     ip = CafeMap::UserIp::Api.new.ip
+        #     location = CafeMap::UserIp::Api.new.to_geoloc
+        #     view 'map', locals: { info: infos_data,
+        #                           ip:,
+        #                           your_lat: location[0],
+        #                           your_long: location[1] }
+        #   end
+        # end
+        routing.on 'cafemap' do
+          routing.on 'random_store', String do |city|
+            # Get /api/v1/cafemap/random_store/{city}
+            routing.get do
+              filtered_info = Service::AppraiseInfo.new.call(city)
+              if filtered_info.failure?
+                failed = Representer::HttpResponse.new(filtered_info.failure)
+                routing.halt failed.http_status_code, failed.to_json
               end
-            rescue StandardError => e
-              flash[:error] = "ERROR TYPE: #{e}-- Having trouble accessing database--"
-              routing.redirect '/'
+              # Get Obj array
+              google_data = Service::AppraiseStore.new.call(city)
+              if filtered_info.failure?
+                failed = Representer::HttpResponse.new(google_data.failure)
+                routing.halt google_data.http_status_code, google_data.to_json
+              end
+              Representer::InfosList.new(filtered_info.value!.message).to_json
+              Representer::StoresList.new(google_data.value!.message).to_json
             end
-
-            # Get Obj array
-            google_data = filtered_info.map(&:store)
-
-            # Get Value object
-            infostat = Views::StatInfos.new(filtered_info)
-            storestat = Views::StatStores.new(google_data)
-
-            view 'region', locals: { infostat:,
-                                     storestat: }
-
-          rescue StandardError => e
-            puts e.full_message
           end
-        end
-      end
-
-      routing.on 'map' do
-        routing.get do
-          result = CafeMap::Service::AppraiseCafe.new.call
-          if result.failure?
-            flash[:error] = result.failure
-          else
-            infos_data = result.value!
+          routing.is do
+            # Get /api/v1/cafemap?city={city}
+            routing.get do
+              city_request = Request.EncodedCityName.new(routing.params)
+              filtered_info = Service::AppraiseInfo.new.call(city_request:)
+              if filtered_info.failure?
+                failed = Representer::HttpResponse.new(filtered_info.failure)
+                routing.halt failed.http_status_code, failed.to_json
+              end
+              # Get Obj array
+              google_data = Service::AppraiseStore.new.call(city_request:)
+              if google_data.failure?
+                failed = Representer::HttpResponse.new(google_data.failure)
+                routing.halt google_data.http_status_code, google_data.to_json
+              end
+              Representer::InfosList.new(filtered_info.value!.message).to_json
+              Representer::StoresList.new(google_data.value!.message).to_json
+            end
           end
-          ip = CafeMap::UserIp::Api.new.ip
-          location = CafeMap::UserIp::Api.new.to_geoloc
-          view 'map', locals: { info: infos_data,
-                                ip:,
-                                your_lat: location[0],
-                                your_long: location[1] }
         end
       end
     end
