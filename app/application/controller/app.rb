@@ -13,10 +13,6 @@ module CafeMap
 
     # use Rack::MethodOverride # allows HTTP verbs beyond GET/POST (e.g., DELETE)
 
-    status_handler(404) do
-      view('404')
-    end
-
     route do |routing|
       response['Content-Type'] = 'text/html; charset=utf-8'
 
@@ -54,18 +50,20 @@ module CafeMap
         routing.on 'cafemap' do
           routing.on 'random_store', String do |city|
             # Get /api/v1/cafemap/random_store/{city}
-            routing.get do
+            routing.post do
               filtered_info = Service::MiningInfo.new.call(city)
               if filtered_info.failure?
                 failed = Representer::HttpResponse.new(filtered_info.failure)
                 routing.halt failed.http_status_code, failed.to_json
               end
+
               # Get Obj array
               google_data = Service::MiningStore.new.call(city)
-              if filtered_info.failure?
+              if google_data.failure?
                 failed = Representer::HttpResponse.new(google_data.failure)
                 routing.halt google_data.http_status_code, google_data.to_json
               end
+              
               Representer::InfosList.new(filtered_info.value!.message).to_json
               Representer::StoresList.new(google_data.value!.message).to_json
             end
@@ -73,7 +71,10 @@ module CafeMap
           routing.is do
             # Get /api/v1/cafemap?city={city}
             routing.get do
+              puts ":city -> #{:city}"
+              puts ":routing.params -> #{routing.params['city']}" 
               city_request = Request.EncodedCityName.new(routing.params)
+              puts ":city_request -> #{city_request}" 
               filtered_info = Service::MiningInfo.new.call(city_request:)
               if filtered_info.failure?
                 failed = Representer::HttpResponse.new(filtered_info.failure)
