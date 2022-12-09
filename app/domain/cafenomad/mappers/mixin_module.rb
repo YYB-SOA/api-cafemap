@@ -103,6 +103,36 @@ module StoreMixinAll
     @data['geometry']['location']['lng']
   end
 
+  # BELOW: Addition information for GDSC-----
+  def viewport_ne_lat
+    @data['geometry']['viewport']['northeast']['lat']
+  end
+
+  def viewport_ne_lng
+    @data['geometry']['viewport']['northeast']['lng']
+  end
+
+  def viewport_sw_lat
+    @data['geometry']['viewport']['southwest']['lat']
+  end
+
+  def viewport_sw_lng
+    @data['geometry']['viewport']['southwest']['lng']
+  end
+
+  def global_code
+    @data['plus_code']['global_code']
+  end
+
+  def compound_code
+    @data['plus_code']['compound_code']
+  end
+
+  def types
+    @data['types']
+  end
+  # ABOVE: Addition information for GDSC------
+
   def rating
     @data['rating']
   end

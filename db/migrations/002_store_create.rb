@@ -35,6 +35,18 @@ Sequel.migration do
       String      :location_lng
       String      :plus_code
 
+      #-------Below: GDSC additional message--------------
+      String      :compound_code
+      String      :global_code
+      String      :types
+      String      :business_status
+
+      String      :viewport_NE_lat
+      String      :viewport_NE_lng
+      String      :viewport_SW_lat
+      String      :viewport_SW_lng
+      #-------Above: GDSC additional message--------------
+
       Float       :rating
       Integer     :user_ratings_total
       Integer     :price_level

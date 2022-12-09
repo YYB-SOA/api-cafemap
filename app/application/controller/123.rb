@@ -32,8 +32,11 @@ puts "---------"
 
 filtered_info = CafeMap::Database::InfoOrm.where(city: "hsinchu").all
 google_data = filtered_info.map{|x| x.store[0]} 
+
 b = CafeMap::Response::StoreList.new(google_data)
 puts CafeMap::Representer::StoresList.new(b).to_json
+
+
 
 # a = Struct.new(:info)
 # b = a.new({info: filtered_info})
