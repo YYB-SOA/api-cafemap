@@ -140,4 +140,4 @@ end
 #   def user_ratings_total
 #     @data['user_ratings_total']
 #   end
-end
+# end

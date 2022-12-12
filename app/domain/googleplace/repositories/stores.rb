@@ -59,10 +59,10 @@ module CafeMap
           viewport_sw_lat: db_record.viewport_sw_lat,
           viewport_sw_lng: db_record.viewport_sw_lng,
           rating: db_record.rating,
-          user_ratings_total: db_record.user_ratings_total
+          user_ratings_total: db_record.user_ratings_total,
           compound_code: db_record.compound_code,
           global_code: db_record.global_code,
-          types: db_record.types,
+          types: db_record.types
         )
       end
 

@@ -18,7 +18,7 @@ module CafeMap
         if city_request.success?
           Success(input.merge(city: city_request.value!))
         else
-          Faliure(city_request.failure)
+          Failure(city_request.failure)
         end
       end
 
