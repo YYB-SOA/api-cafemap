@@ -43,10 +43,18 @@ module CafeMap
             place_id:,
             name:,
             formatted_address:,
+            business_status:,
             location_lat:,
             location_lng:,
+            viewport_ne_lat:,
+            viewport_ne_lng:,
+            viewport_sw_lat:,
+            viewport_sw_lng:,
+            compound_code:,
+            global_code:,
             rating:,
-            user_ratings_total:
+            user_ratings_total:,
+            types:
           )
         end
       end

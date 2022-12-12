@@ -81,63 +81,63 @@ module InfoMixinRank
 end
 
 # Using mixin to avoid rubocop show "Too many method inside a class"
-module StoreMixinAll
-  # Infos about  rank
-  def place_id
-    @data['place_id']
-  end
+# module StoreMixinAll
+#   # Infos about  rank
+#   def place_id
+#     @data['place_id']
+#   end
 
-  def name
-    @data['name']
-  end
+#   def name
+#     @data['name']
+#   end
 
-  def formatted_address
-    @data['formatted_address']
-  end
+#   def formatted_address
+#     @data['formatted_address']
+#   end
 
-  def location_lat
-    @data['geometry']['location']['lat']
-  end
+#   def location_lat
+#     @data['geometry']['location']['lat']
+#   end
 
-  def location_lng
-    @data['geometry']['location']['lng']
-  end
+#   def location_lng
+#     @data['geometry']['location']['lng']
+#   end
 
-  # BELOW: Addition information for GDSC-----
-  def viewport_ne_lat
-    @data['geometry']['viewport']['northeast']['lat']
-  end
+#   # BELOW: Addition information for GDSC-----
+#   def viewport_ne_lat
+#     @data['geometry']['viewport']['northeast']['lat']
+#   end
 
-  def viewport_ne_lng
-    @data['geometry']['viewport']['northeast']['lng']
-  end
+#   def viewport_ne_lng
+#     @data['geometry']['viewport']['northeast']['lng']
+#   end
 
-  def viewport_sw_lat
-    @data['geometry']['viewport']['southwest']['lat']
-  end
+#   def viewport_sw_lat
+#     @data['geometry']['viewport']['southwest']['lat']
+#   end
 
-  def viewport_sw_lng
-    @data['geometry']['viewport']['southwest']['lng']
-  end
+#   def viewport_sw_lng
+#     @data['geometry']['viewport']['southwest']['lng']
+#   end
 
-  def global_code
-    @data['plus_code']['global_code']
-  end
+#   def global_code
+#     @data['plus_code']['global_code']
+#   end
 
-  def compound_code
-    @data['plus_code']['compound_code']
-  end
+#   def compound_code
+#     @data['plus_code']['compound_code']
+#   end
 
-  def types
-    @data['types']
-  end
-  # ABOVE: Addition information for GDSC------
+#   def types
+#     @data['types']
+#   end
+#   # ABOVE: Addition information for GDSC------
 
-  def rating
-    @data['rating']
-  end
+#   def rating
+#     @data['rating']
+#   end
 
-  def user_ratings_total
-    @data['user_ratings_total']
-  end
+#   def user_ratings_total
+#     @data['user_ratings_total']
+#   end
 end
