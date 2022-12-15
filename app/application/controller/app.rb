@@ -48,10 +48,10 @@ module CafeMap
         #   end
         # end
         routing.on 'cafemap' do
-          routing.on 'random_store', String do |city|
-            # Get /api/v1/cafemap/random_store/{city}
+          routing.on 'randomstore', String do |city|
+            # Get /api/v1/cafemap/randomstore/{city}
             routing.post do
-              filtered_info = Service::MiningInfo.new.call(city)
+              filtered_info = Service::MiningInfo.new.call(city:city)
               if filtered_info.failure?
                 failed = Representer::HttpResponse.new(filtered_info.failure)
                 routing.halt failed.http_status_code, failed.to_json
@@ -71,23 +71,16 @@ module CafeMap
           routing.is do
             # Get /api/v1/cafemap?city={city}
             routing.get do
-              puts ":city -> #{:city}"
-              puts ":routing.params -> #{routing.params['city']}" 
               city_request = Request::EncodedCityName.new(routing.params)
-              puts ":city_request -> #{city_request}" 
-              filtered_info = Service::MiningInfo.new.call(city_request:)
-              if filtered_info.failure?
-                failed = Representer::HttpResponse.new(filtered_info.failure)
+              filtered_cafelist = Service::MiningCafeList.new.call(city_request:)
+              if filtered_cafelist.failure?
+                failed = Representer::HttpResponse.new(filtered_cafelist.failure)
                 routing.halt failed.http_status_code, failed.to_json
               end
-              # Get Obj array
-              google_data = Service::MiningStore.new.call(city_request:)
-              if google_data.failure?
-                failed = Representer::HttpResponse.new(google_data.failure)
-                routing.halt google_data.http_status_code, google_data.to_json
-              end
-              Representer::InfosList.new(filtered_info.value!.message).to_json
-              Representer::StoresList.new(google_data.value!.message).to_json
+
+              http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
+              response.status = http_response.http_status_code
+              Representer::CafeList.new(filtered_cafelist.value!.message).to_json
             end
           end
         end

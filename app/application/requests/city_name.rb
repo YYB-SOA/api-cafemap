@@ -17,23 +17,22 @@ module CafeMap
       # Use in API to parse incoming list requests
       def call
         Success(
-          # JSON.parse(decode(@params['city'])) # perhaps should be modify next week
-          decode(@params['city']) # perhaps should be modify next week
-        )
-      rescue StandardError
-        Failure(
-          Response::ApiResult.new(
-            status: :bad_request,
-            message: 'City name is not found.'
-          )
+          # JSON.parse(decode(@params['city']))
+          @params['city']# perhaps should be modify next week
         )
       end
+    rescue StandardError => e
+      Failure(
+        Response::ApiResult.new(
+          status: :bad_request,
+          message: e
+        )
+      )
+    end
 
-      # Decode params
-      def decode(param)
-        Base64.urlsafe_decode64(param)
-      end
-
+    # Decode params
+    def decode(param)
+      Base64.urlsafe_decode64(param)
     end
   end
 end
