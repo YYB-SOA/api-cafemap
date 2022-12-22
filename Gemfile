@@ -82,3 +82,6 @@ gem 'json'
 
 # Stat feature
 gem 'descriptive_statistics'
+gem "rover-df"
+# gem 'subprocess'
+# gem 'pickle'
