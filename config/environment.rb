@@ -20,6 +20,8 @@ module CafeMap
     Figaro.load
     def self.config = Figaro.env
 
+    Figaro.env.force_ssl
+
     use Rack::Session::Cookie, secret: config.SESSION_SECRET
 
     configure :app_test do

@@ -70,9 +70,7 @@ module CafeMap
       end
 
       def get_info_from_db(input)
-        puts "--------"
         info_from_db = CafeMap::Database::InfoOrm.where(city: input[:city_eg])
-        puts info_from_db
         store_from_db = CafeMap::Database::InfoOrm.where(city: input[:city_eg]).map { |x| x.store[0] }
         CafeMap::Response::CafeList.new(info_from_db, store_from_db)
           .then { |list| Response::ApiResult.new(status: :ok, message: list) }
