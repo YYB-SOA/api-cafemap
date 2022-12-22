@@ -1,42 +1,53 @@
-def require_app(folders = %w[infrastructure domain presentation application])
-    app_list = Array(folders).map { |folder| "app/#{folder}" }
-    full_list = ['config', app_list].flatten.join(',')
+require "roda"
 
-    Dir.glob("./{#{full_list}}/**/*.rb").each do |file|
-      require file
-    end
-  end
-
-require_app
-
-puts "---------"
-
-# a =  CafeMap::Database::InfoOrm.all
-# puts a
-# b = CafeMap::Representer::InfosList.new(a)
-# puts b.to_json
-
-# require 'roar/decorator'
-# require 'roar/json'
-# result = Struct.new(:title, :composers)
-
-# class SongRepresenter < Roar::Decorator
-#   include Roar::JSON
-
-#   property :title
-#   collection :composers
-# end
-
-# test = result.new('123', ['Fong', "Yuan"])
-# SongRepresenter.new(test)
-
-filtered_info = CafeMap::Database::InfoOrm.where(city: "hsinchu").all
-google_data = filtered_info.map{|x| x.store[0]} 
-b = CafeMap::Response::StoreList.new(google_data)
-puts CafeMap::Representer::StoresList.new(b).to_json
-
-# a = Struct.new(:info)
-# b = a.new({info: filtered_info})
-# c = CafeMap::Representer::InfosList.new(b).to_json
-# puts c
-# Representer::StoresList.new(google_data).to_json
+# class App < Roda
+#     route do |r|
+#       # GET /
+#       r.root do
+#         "Home"
+#       end
+  
+#       # GET /about
+#       r.get "about" do
+#         "About"
+#       end
+  
+#       # GET /post/2011/02/16/hello
+#       r.get "post", Integer, Integer, Integer, String do |year, month, day, slug|
+#         "#{year}-#{month}-#{day} #{slug}" #=> "2011-02-16 hello"
+#       end
+  
+#       # GET /username/foobar branch
+#       r.on "username", String, method: :get do |username|
+#         user = User.find_by_username(username)
+  
+#         # GET /username/foobar/posts
+#         r.is "posts" do
+#           # You can access user here, because the blocks are closures.
+#           "Total Posts: #{user.posts.size}" #=> "Total Posts: 6"
+#         end
+  
+#         # GET /username/foobar/following
+#         r.is "following" do
+#           user.following.size.to_s #=> "1301"
+#         end
+#       end
+  
+#       # /search?q=barbaz
+#       r.get "search" do
+#         "Searched for #{r.params['q']}" #=> "Searched for barbaz"
+#       end
+  
+#       r.is "login" do
+#         # GET /login
+#         r.get do
+#           "Login"
+#         end
+  
+#         # POST /login?user=foo&password=baz
+#         r.post do
+#           "#{r.params['user']}:#{r.params['password']}" #=> "foo:baz"
+#         end
+#       end
+#     end
+#   end

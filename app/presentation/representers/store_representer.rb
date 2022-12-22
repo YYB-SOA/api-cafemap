@@ -19,6 +19,16 @@ module CafeMap
       property :location_lng
       property :rating
       property :user_ratings_total
+      # Below: Additional for GDSC
+      property :compound_code
+      property :global_code
+      property :types
+      property :business_status
+      property :viewport_ne_lat
+      property :viewport_ne_lng
+      property :viewport_sw_lat
+      property :viewport_sw_lng
+      # Above: Additional for GDSC
     end
   end
 end

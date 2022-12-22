@@ -9,27 +9,13 @@ end
 
 desc 'Run unit and integration tests'
 Rake::TestTask.new(:spec) do |t|
-  t.pattern = 'spec/*_spec.rb'
+  t.pattern = 'spec/tests/**/*_spec.rb'
   t.warning = false
 end
-
-## Haven't complete the acceptance_spec
-# desc 'Run acceptance tests'
-# task :spec_accept do
-#   puts 'NOTE: run app in test environment in another process'
-#   sh 'ruby spec/tests/acceptance/acceptance_spec.rb'
-# end
-
-
 
 desc 'Keep rerunning unit/integration tests upon changes'
 task :respec do
   sh "rerun -c 'rake spec' --ignore 'coverage/*' --ignore 'repostore/*'"
-end
-
-desc 'Run the webserver and application'
-task :run do
-  sh 'bundle exec puma'
 end
 
 desc 'Run the webserver and application and restart if code changes'
@@ -37,12 +23,16 @@ task :rerun do
   sh "rerun -c --ignore 'coverage/*' --ignore 'repostore/*' -- bundle exec puma"
 end
 
-desc 'Generates a 64 by secret for Rack::Session'
-task :new_session_secret do
-  require 'base64'
-  require 'securerandom'
-  secret = SecureRandom.random_bytes(64).then { Base64.urlsafe_encode64(_1) }
-  puts "SESSION_SECRET: #{secret}"
+namespace :run do
+  desc 'Run API in dev mode'
+  task :dev do
+    sh 'rerun -c "bundle exec puma -p 9090"'
+  end
+
+  desc 'Run API in test mode'
+  task :test do
+    sh 'RACK_ENV=test bundle exec puma -p 9090'
+  end
 end
 
 # ################################Database: Rake:db

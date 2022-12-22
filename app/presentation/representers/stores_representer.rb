@@ -14,7 +14,7 @@ module CafeMap
       include Roar::Decorator::HypermediaConsumer
 
       collection :stores, extend: Representer::Store,
-                         class: OpenStruct
+                          class: OpenStruct
     end
   end
 end
