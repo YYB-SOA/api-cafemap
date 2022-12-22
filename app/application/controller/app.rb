@@ -30,20 +30,24 @@ module CafeMap
         routing.on 'cafemap' do
           routing.on 'random_store' do
             # post api/v1/cafemap/random_store?city={city}
-            routing.is do
-              routing.post do
-                city_req = Request::EncodedCityName.new(routing.params)
-                filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
-                if filtered_cafelist.failure?
-                  failed = Representer::HttpResponse.new(filtered_cafelist.failure)
-                  routing.halt failed.http_status_code, failed.to_json
-                end
-  
-                http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
-                response.status = http_response.http_status_code
-                Representer::CafeList.new(filtered_cafelist.value!.message).to_json
+
+            routing.post do
+              puts routing.params
+              city_req = Request::EncodedCityName.new(routing.params)
+              filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
+              if filtered_cafelist.failure?
+                failed = Representer::HttpResponse.new(filtered_cafelist.failure)
+                routing.halt failed.http_status_code, failed.to_json
               end
+
+              http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
+              response.status = http_response.http_status_code
+              Representer::CafeList.new(filtered_cafelist.value!.message).to_json
             end
+
+            # routing.is do
+
+            # end
           end
           routing.is do
             # Get /api/v1/cafemap?city={city}
