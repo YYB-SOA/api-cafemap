@@ -10,3 +10,6 @@ coverage/index.html
 *.db
 # Ignore application configuration
 /config/application.yml
+# Ignore py model temp file
+/lib/temp/新竹_clustering_out.csv
+/lib/temp/新竹_clustering_input.txt
