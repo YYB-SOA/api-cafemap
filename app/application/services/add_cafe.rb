@@ -52,11 +52,12 @@ module CafeMap
         city_english = info_unrecorded[0].city
         # 睡前紀錄：接下來要把印出來的東西丟進 representer
         info_unrecorded.each do |each_unrecorded|
-          connect_database(each_unrecorded).create(each_unrecorded)
+          
           # Representer::Info.new(each_unrecorded).to_json
           place_entity = CafeMap::Place::StoreMapper.new(App.config.PLACE_TOKEN,
                                                          [each_unrecorded.name]).load_several
           connect_database(place_entity[0]).create(place_entity[0], each_unrecorded.name)
+          connect_database(each_unrecorded).create(each_unrecorded)
           last_infoid = connect_database(each_unrecorded).last_id
           last_store = connect_database(place_entity[0]).last
           last_store.update(info_id: last_infoid)
