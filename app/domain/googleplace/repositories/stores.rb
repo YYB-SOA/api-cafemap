@@ -48,6 +48,7 @@ module CafeMap
         return nil unless db_record
 
         Entity::Store.new(
+          id:db_record.id,
           place_id: db_record.place_id,
           name: db_record.name,
           formatted_address: db_record.formatted_address,
