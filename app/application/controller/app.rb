@@ -82,7 +82,15 @@ module CafeMap
             # Get Obj array
             google_data = filtered_info.map(&:store)
 
+
+            # Update cluster output
+
+
+
             # Get Value object
+            
+            # cluster_data_in_db = ???
+            # clusterstat = Views::StatStores.new(cluster_data_in_db)
             infostat = Views::StatInfos.new(filtered_info)
             storestat = Views::StatStores.new(google_data)
 

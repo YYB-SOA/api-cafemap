@@ -79,3 +79,11 @@ gem 'json'
 # Stat feature
 gem 'descriptive_statistics'
 gem 'rover-df'
+
+# Asynchronicity
+gem 'concurrent-ruby', '~> 1.1'
+gem 'aws-sdk-sqs', '~> 1.48'
+
+# WORKER
+gem 'shoryuken', '~> 5.3'
+gem 'faye', '~> 1.4'
