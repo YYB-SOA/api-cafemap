@@ -39,12 +39,15 @@ module CafeMap
         df_store = df_transformer(db_hash['store_db'], 'store')
         df = df_info.inner_join(df_store, on: { id: :info_id })
         k_means_runner(@citi, df)
-        puts "123"
+        Success(input.merge(citi: @citi))
+        rescue StandardError
+          Failure("Something wrong in k_means_runner")
       end
 
       def read_cluster_output(citi)
         sleep 3
         rawcluster_output = File.read(f("app/domain/clustering/temp/#{citi}_clustering_out.json"))
+        puts "456"
       end
 
       def get_db(input)
