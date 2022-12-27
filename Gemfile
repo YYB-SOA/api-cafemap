@@ -18,6 +18,9 @@ gem 'slim', '~> 4.1'
 gem 'puma', '~> 5'
 gem 'rack-session', '~> 0.3'
 gem 'roda', '~> 3'
+gem 'rack-cache'
+gem 'redis'
+gem 'redis-rack-cache'
 
 
 # Controllers and services

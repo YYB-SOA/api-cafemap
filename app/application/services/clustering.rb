@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../domain/clustering/runner/k_means_main'
+# require_relative '../domain/clustering/runner/k_means_main'
 require 'dry/transaction'
 require 'json'
 
@@ -34,6 +34,7 @@ module CafeMap
       end
 
       def call_kmeans_main(input)
+        puts "13"
         db_hash = input[:db_hash]
         df_info = df_transformer(db_hash['info_db'], 'info')
         df_store = df_transformer(db_hash['store_db'], 'store')
@@ -46,14 +47,12 @@ module CafeMap
         rawcluster_output = File.read(f("app/domain/clustering/temp/#{citi}_clustering_out.json"))
       end
 
-    rescue StandardError
-      Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
-
-
-
       def get_db(input)
-        info_from_db = CafeMap::Database::InfoOrm.where(city: input['city'])
-        store_from_db = CafeMap::Database::InfoOrm.where(city: input['city']).map { |x| x.store[0] }
+        infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several
+        city = infos_data.select { |filter| filter.address.include? input[:city] }.shuffle[0].city
+        puts city
+        info_from_db = CafeMap::Database::InfoOrm.where(city: city)
+        store_from_db = CafeMap::Database::InfoOrm.where(city: city).map { |x| x.store[0] }
         { 'info_db' => info_from_db, 'store_db' => store_from_db }
       rescue StandardError => e
         raise "Could not find that city on CafeNomad #{e}"

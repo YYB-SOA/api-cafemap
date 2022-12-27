@@ -6,6 +6,8 @@ require 'sequel'
 require 'yaml'
 require 'rack/session'
 require 'logger'
+require 'rack/cache'
+require 'redis-rack-cache'
 
 module CafeMap
   # Environment-specific configuration
