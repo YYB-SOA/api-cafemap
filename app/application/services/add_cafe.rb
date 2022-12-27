@@ -50,7 +50,6 @@ module CafeMap
       def store_info(input)
         info_unrecorded = input[:info_unrecorded]
         city_english = info_unrecorded[0].city
-        # 睡前紀錄：接下來要把印出來的東西丟進 representer
         info_unrecorded.each do |each_unrecorded|
           
           # Representer::Info.new(each_unrecorded).to_json
