@@ -34,13 +34,12 @@ module CafeMap
       end
 
       def call_kmeans_main(input)
-        puts "13"
         db_hash = input[:db_hash]
-        puts db_hash['info_db']
         df_info = df_transformer(db_hash['info_db'], 'info')
         df_store = df_transformer(db_hash['store_db'], 'store')
         df = df_info.inner_join(df_store, on: { id: :info_id })
-        k_means_runner(city, df)
+        k_means_runner(@citi, df)
+        puts "123"
       end
 
       def read_cluster_output(citi)
@@ -50,9 +49,9 @@ module CafeMap
 
       def get_db(input)
         infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several
-        citi = infos_data.select { |filter| filter.address.include? input[:city] }.shuffle[0].city
-        info_from_db = CafeMap::Database::InfoOrm.where(city: citi).all
-        store_from_db = CafeMap::Database::InfoOrm.where(city: citi).map { |x| x.store[0] }
+        @citi = infos_data.select { |filter| filter.address.include? input[:city] }.shuffle[0].city
+        info_from_db = CafeMap::Database::InfoOrm.where(city: @citi).all
+        store_from_db = CafeMap::Database::InfoOrm.where(city: @citi).map { |x| x.store[0] }
         { 'info_db' => info_from_db, 'store_db' => store_from_db }
       rescue StandardError => e
         raise "Could not find that city on CafeNomad #{e}"
