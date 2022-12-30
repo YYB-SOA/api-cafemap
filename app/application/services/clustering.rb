@@ -47,7 +47,8 @@ module CafeMap
       def read_cluster_output(input)
         sleep 3
         fh = JSON.parse(File.read(("app/domain/clustering/temp/#{input[:citi]}_clustering_out.json")))
-        cluster_result = json_to_hash_array(fh)
+        fh_result = json_to_hash_array(fh)
+        cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
         CafeMap::Response::ClusterList.new(cluster_result)
           .then { |list| Response::ApiResult.new(status: :ok, message: list) }
           .then { |result| Success(result) }

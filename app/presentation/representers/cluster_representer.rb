@@ -29,7 +29,7 @@ module CafeMap
       property      :standing_desk
       property      :mrt
       property      :open_time
-      property      :info_id
+      # property      :info_id
       property      :place_id
       # property      :name
       property      :formatted_address
