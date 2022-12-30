@@ -17,7 +17,7 @@ module CafeMap
 
       # GET /
       routing.root do
-        message = "CafeMap API v1 at /region/ in #{App.environment} mode"
+        message = "CafeMap api/v1 at /root/ in #{App.environment} mode"
 
         result_response = Representer::HttpResponse.new(
           Response::ApiResult.new(status: :ok, message:)
@@ -32,7 +32,7 @@ module CafeMap
             # post api/v1/cafemap/random_store?city={city}
 
             routing.post do
-              puts routing.params
+              puts "api/v1/cafemap/random_store/#{routing.params}\n"
               city_req = Request::EncodedCityName.new(routing.params)
               filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
               if filtered_cafelist.failure?

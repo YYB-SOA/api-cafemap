@@ -87,9 +87,10 @@ module CafeMap
         return_array
       end
 
-      def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
+      def delete_clustering_files(folder, deleted_names = ["clustering_out.json", "clustering_input.txt"])
         deleted_names.each do |name|
-          Dir.glob(File.join(folder, "*#{name}")).each { |file_path| File.delete(file_path) }
+          file_paths = Dir.glob(File.join(folder, "*#{name}"))
+          file_paths.each { |file_path| File.delete(file_path) }
         end
       end
     end
