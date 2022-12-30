@@ -51,7 +51,7 @@ module CafeMap
       attribute :cluster, Coercible::String
 
       def to_attr_hash
-        to_hash # except:remove keys from hash
+        to_hash
       end
     end
   end
