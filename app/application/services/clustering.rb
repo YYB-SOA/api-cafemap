@@ -45,8 +45,9 @@ module CafeMap
       end
 
       def read_cluster_output(input)
-        sleep 3
+        sleep 1
         fh = JSON.parse(File.read(("app/domain/clustering/temp/#{input[:citi]}_clustering_out.json")))
+        delete_clustering_files("app/domain/clustering/temp")
         fh_result = json_to_hash_array(fh)
         cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
         CafeMap::Response::ClusterList.new(cluster_result)
@@ -84,6 +85,12 @@ module CafeMap
           end
         end
         return_array
+      end
+
+      def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
+        deleted_names.each do |name|
+          Dir.glob(File.join(folder, "*#{name}")).each { |file_path| File.delete(file_path) }
+        end
       end
     end
   end
