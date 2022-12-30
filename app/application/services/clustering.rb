@@ -27,10 +27,10 @@ module CafeMap
 
       def get_info_from_db(input)
         if (db_hash = get_db(input))
-          Success(input.merge(db_hash: db_hash))
+          Success(input.merge(db_hash:))
         end
       rescue StandardError
-        Failure("Something wrong in DB")
+        Failure('Something wrong in DB')
       end
 
       def call_kmeans_main(input)
@@ -40,24 +40,49 @@ module CafeMap
         df = df_info.inner_join(df_store, on: { id: :info_id })
         k_means_runner(@citi, df)
         Success(input.merge(citi: @citi))
-        rescue StandardError
-          Failure("Something wrong in k_means_runner")
+      rescue StandardError
+        Failure('Something wrong in k_means_runner')
       end
 
-      def read_cluster_output(citi)
+      def read_cluster_output(input)
         sleep 3
-        rawcluster_output = File.read(f("app/domain/clustering/temp/#{citi}_clustering_out.json"))
-        puts "456"
+        fh = JSON.parse(File.read(("app/domain/clustering/temp/#{input[:citi]}_clustering_out.json")))
+        cluster_result = json_to_hash_array(fh)
+        CafeMap::Response::ClusterList.new(cluster_result)
+          .then { |list| Response::ApiResult.new(status: :ok, message: list) }
+          .then { |result| Success(result) }
+      rescue StandardError
+        Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
       end
 
       def get_db(input)
         infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several
-        @citi = infos_data.select { |filter| filter.address.include? input[:city] }.shuffle[0].city
+        @citi = infos_data.select { |filter| filter.address.include? input[:city] }.sample.city
         info_from_db = CafeMap::Database::InfoOrm.where(city: @citi).all
         store_from_db = CafeMap::Database::InfoOrm.where(city: @citi).map { |x| x.store[0] }
         { 'info_db' => info_from_db, 'store_db' => store_from_db }
       rescue StandardError => e
         raise "Could not find that city on CafeNomad #{e}"
+      end
+
+      def json_to_hash_array(fh)
+        return_array = []
+        fh.each do |key1, _value1|
+          if key1 == 'id'
+            fh[key1].each do |_key2, value2|
+              temp = {}
+              temp[key1] = value2
+              return_array.append(temp)
+            end
+          else
+            fh[key1].each do |_key2, value2|
+              return_array.each do |each_h|
+                each_h[key1] = value2
+              end
+            end
+          end
+        end
+        return_array
       end
     end
   end

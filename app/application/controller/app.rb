@@ -50,16 +50,17 @@ module CafeMap
               routing.get do
                 # response.cache_control public: true, max_age: 600
                 city_req = Request::EncodedCityName.new(routing.params)
-                selected_city = Service::Clustering.new.call(city_request: city_req)
+                cluster_result = Service::Clustering.new.call(city_request: city_req)
   
-                # if filtered_cafelist.failure?
-                #   failed = Representer::HttpResponse.new(filtered_cafelist.failure)
-                #   routing.halt failed.http_status_code, failed.to_json
-                # end
+                if cluster_result.failure?
+                  failed = Representer::HttpResponse.new(cluster_result.failure)
+                  routing.halt failed.http_status_code, failed.to_json
+                end
   
-                # http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
-                # response.status = http_response.http_status_code
-                # Representer::CafeList.new(filtered_cafelist.value!.message).to_json
+                http_response = Representer::HttpResponse.new(cluster_result.value!)
+                response.status = http_response.http_status_code
+                puts "!23 "
+                Representer::ClusterList.new(cluster_result.value!.message).to_json
               end
             end
             # post api/v1/cafemap/clusters?city={city}
