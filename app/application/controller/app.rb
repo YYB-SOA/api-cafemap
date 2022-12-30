@@ -46,12 +46,13 @@ module CafeMap
               Representer::CafeList.new(filtered_cafelist.value!.message).to_json
             end
           end
+          # post api/v1/cafemap/clusters?city={city}
           routing.on 'clusters' do
             routing.is do
               routing.get do
                 # response.cache_control public: true, max_age: 600
-                city_req = Request::EncodedCityName.new(routing.params)
-                cluster_result = Service::Clustering.new.call(city_request: city_req)
+                city_request = Request::EncodedCityName.new(routing.params)
+                cluster_result = Service::Clustering.new.call(city_request: city_request)
   
                 if cluster_result.failure?
                   failed = Representer::HttpResponse.new(cluster_result.failure)
@@ -64,13 +65,11 @@ module CafeMap
                 Representer::ClusterList.new(cluster_result.value!.message).to_json
               end
             end
-            # post api/v1/cafemap/clusters?city={city}
           end
           routing.is do
             # Get /api/v1/cafemap?city={city}
             routing.get do
               # response.cache_control public: true, max_age: 30
-              # city_request = Request::EncodedCityName.new(routing.params)
               filtered_cafelist = Service::MiningCafeList.new.call(routing.params)
               if filtered_cafelist.failure?
                 failed = Representer::HttpResponse.new(filtered_cafelist.failure)

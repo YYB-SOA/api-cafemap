@@ -2,7 +2,7 @@ require_relative '../../helpers/spec_helper'
 require_relative '../../helpers/vcr_helper'
 require_relative '../../helpers/database_helper'
 require_relative '../../helpers/acceptance_helper'
-
+require 'cgi'
 require 'rack/test'
 
 def app
@@ -40,10 +40,25 @@ describe 'Test API routes' do
 
     it 'HAPPY: should be able to find and save remote data into to db' do
       # WHEN: the service is called with the request form object
-      city_req = CafeMap::Request::EncodedCityName.new({"city"=>city_acceptance})
-      filtered_cafelist = CafeMap::Service::AddCafe.new.call(city_request: city_req)
-      puts filtered_cafelist
-      get "/api/v1/cafemap/random_store/city=#{CITY_DEFAULT2}"
+      city_request = CafeMap::Request::EncodedCityName.new({"city"=>"南投"})
+      puts "city_request.city: #{city_request.uncode_cityname}"
+      outputs = CafeMap::Service::AddCafe.new.call(city_request: city_request)
+
+      # puts "outputs: #{outputs}"
+      # encoded_city = CGI.escape(city_request.uncode_cityname)
+
+
+      # puts "\n\n CGI encoded_city: #{encoded_city}\n\n"
+      puts "\n\n Monad encoded_city: #{city_request.call}\n\n"
+      puts "\n\n Monad encoded_city: #{city_request.call.value!}\n\n"
+      puts "\n\n Monad encoded_city: #{city_request.call.value!.class}\n\n"
+      puts "\n\n Condition: #{city_request.call.value! == "南投"}\n\n"
+      city_ta = city_request.call.value!
+      url_utf8 = "/api/v1/cafemap/random_store?city=#{city_ta}".encode('UTF-8', invalid: :replace, undef: :replace, replace: '\uFFFD')
+      encoded_url = url_utf8.encode('ASCII', invalid: :replace, undef: :replace, replace: '?')
+
+      post encoded_url
+      puts "\n\n last_response: #{last_response}\n\n"
       _(last_response.status).must_equal 202
 
       # # Then this 2 stores supposed to be exist in database

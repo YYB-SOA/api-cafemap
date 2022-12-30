@@ -9,4 +9,3 @@ require 'page-object'
 
 require_relative 'spec_helper'
 require_relative 'database_helper'
-city_param = {"city"=>"南投"}

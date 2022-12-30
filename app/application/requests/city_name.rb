@@ -16,17 +16,26 @@ module CafeMap
 
       # Use in API to parse incoming list requests
       def call
-        Success(
-          @params['city'].force_encoding('UTF-8')
-          # decode(@params)# perhaps should be modify next week
-          # JSON.parse(Base64.urlsafe_decode64(@params[:city]))
+        city = @params['city'].force_encoding('UTF-8')
+        Success(city)
+      rescue StandardError => e
+        Failure(
+          Response::ApiResult.new(
+            status: :bad_request,
+            message: "Error: #{e}. Message: Fails to encode the city_name at /request/city_name"
+          )
         )
       end
+
+      def uncode_cityname
+        @params['city']
+      end
+
     rescue StandardError => e
       Failure(
         Response::ApiResult.new(
           status: :bad_request,
-          message: e
+          message: "Error: #{e}. Message: Bad ApiResult at /request/"
         )
       )
     end
@@ -34,5 +43,6 @@ module CafeMap
     def candy(param)
       Base64.urlsafe_decode64(param)
     end
+    # Can not find where it being call? The frontend acceptance test have to test it
   end
 end
