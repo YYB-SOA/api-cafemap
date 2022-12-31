@@ -11,6 +11,10 @@ module CafeMap
       def initialize(data)
         @data = data
       end
+      
+      def data
+        @data 
+      end
 
       def load_several
         @data.map do |each_cluster|

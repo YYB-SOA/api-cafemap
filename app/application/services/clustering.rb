@@ -77,10 +77,8 @@ module CafeMap
               return_array.append(temp)
             end
           else
-            fh[key1].each do |_key2, value2|
-              return_array.each do |each_h|
-                each_h[key1] = value2
-              end
+            return_array.each_with_index do |element, index|
+              element[key1] = fh[key1][index.to_s]
             end
           end
         end
