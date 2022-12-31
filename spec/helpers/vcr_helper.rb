@@ -33,8 +33,8 @@ module VcrHelper
 
   def self.configure_vcr_for_cafe(recording: :new_episodes)
     VCR.configure do |c|
-      c.filter_sensitive_data('<PLACE_TOKEN>') { CAFE_TOKEN }
-      c.filter_sensitive_data('<PLACE_TOKEN_ESC>') { CGI.escape(CAFE_TOKEN) }
+      c.filter_sensitive_data('<CAFE_TOKEN>') { CAFE_TOKEN }
+      c.filter_sensitive_data('<CAFE_TOKEN_ESC>') { CGI.escape(CAFE_TOKEN) }
     end
 
     VCR.insert_cassette(

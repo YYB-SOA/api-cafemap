@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# test version: do not push
 module CafeMap
   module Repository
     # Repository for Info
@@ -40,10 +41,6 @@ module CafeMap
         Database::InfoOrm.all.map(&:name)
       end
 
-      def self.all_name
-        Database::InfoOrm.all.map(&:name)
-      end
-
       def self.all_wifi
         Database::InfoOrm.all.map(&:wifi)
       end
@@ -75,6 +72,7 @@ module CafeMap
       def self.all_address
         Database::InfoOrm.all.map(&:address)
       end
+
       # check if the data has already in db
       def self.create(entity)
         return if find(entity)

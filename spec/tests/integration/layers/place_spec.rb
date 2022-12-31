@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../../helpers/spec_helper'
-require_relative '../../helpers/vcr_helper'
-require_relative '../../helpers/database_helper'
-require_relative '../../../app/domain/googleplace/mappers/store_mapper'
+require_relative '../../../helpers/spec_helper'
+require_relative '../../../helpers/vcr_helper'
+require_relative '../../../helpers/database_helper'
+require_relative '../../../../app/domain/googleplace/mappers/store_mapper'
 
 describe 'Tests Place API library' do
   before do
