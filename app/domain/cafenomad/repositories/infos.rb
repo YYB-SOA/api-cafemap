@@ -32,10 +32,15 @@ module CafeMap
       def self.all_filtered_name(city)
         Database::InfoOrm.all.select { |each| each.city.include? city }.map(&:name)
       end
-
-      def self.all_filtered(city)
-        Database::InfoOrm.all.select { |each| each.city.include? city }
+      
+      def self.fetch_by_city(city_en)
+        # Only take english string as input, return the row data of matched Info
+        CafeMap::Database::InfoOrm.where(city: city_en).all
       end
+
+      # def self.all_filtered(city)
+      #   Database::InfoOrm.all.select { |each| each.city.include? city }
+      # end
 
       def self.all_name
         Database::InfoOrm.all.map(&:name)

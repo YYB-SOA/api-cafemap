@@ -42,11 +42,15 @@ describe 'Test API routes' do
     end
     it 'HAPPY: should be able to find and save remote data into to db' do
       # # WHEN: the service is called with the request form object
-      test_city = '南投'
+      test_city ="新竹"
       city_request = CafeMap::Request::EncodedCityName.new({ 'city'=>test_city })
+
       puts "CH City Name: #{city_request.uncode_cityname}"
-      outputs = CafeMap::Service::AddCafe.new.call(city_request:)
+
+      # outputs = CafeMap::Service::AddCafe.new.call(city_request:)
       url_encoded_string = CGI.escape(city_request.call.value!)
+      puts "\n\nurl_encoded_string: #{url_encoded_string}"
+
       post "/api/v1/cafemap/random_store?city=#{url_encoded_string}"
 
       _(last_response.status).must_equal 200
@@ -58,6 +62,7 @@ describe 'Test API routes' do
       _(body['stores'].length).must_be :>, 1
 
       name_array = body['stores'].map { |store| store['name'] }
+      puts "\n\nname_array:\n#{name_array}"
       expect(!(name_array.all? { |str| !str.nil? }))
 
       # Testing all data's compund code end with  南投
@@ -110,28 +115,7 @@ describe 'Test API routes' do
     end
   end
 end
-#     it 'should be able to appraise a project subfolder' do
-# CafeMap::Service::AddCafe.new.call(
-#   owner_name: USERNAME, project_name: PROJECT_NAME
-# )
 
-# get "/api/v1/projects/#{USERNAME}/#{PROJECT_NAME}/spec"
-# _(last_response.status).must_equal 202
-
-# 5.times { sleep(1); print '.' }
-
-# get "/api/v1/projects/#{USERNAME}/#{PROJECT_NAME}/spec"
-# _(last_response.status).must_equal 200
-# appraisal = JSON.parse last_response.body
-# _(appraisal.keys.sort).must_equal %w[folder project]
-# _(appraisal['project']['name']).must_equal PROJECT_NAME
-# _(appraisal['project']['owner']['username']).must_equal USERNAME
-# _(appraisal['project']['contributors'].count).must_equal 3
-# _(appraisal['folder']['path']).must_equal 'spec'
-# _(appraisal['folder']['subfolders'].count).must_equal 1
-# _(appraisal['folder']['line_count']).must_equal 151
-# _(appraisal['folder']['base_files'].count).must_equal 3
-# end
 
 # it 'should be report error for an invalid subfolder' do
 #     CodePraise::Service::AddProject.new.call(
