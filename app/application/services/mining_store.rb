@@ -5,31 +5,29 @@ require 'dry/transaction'
 module CafeMap
   module Service
     # Transaction to store cafe data from CafeNomad API to database
-    class MiningStore
+    class MiningInfo
       include Dry::Transaction
 
       step :validate_city
-      step :get_store_from_db
+      step :get_info_from_db
 
-      DB_ERR = 'There is something in database.'
+      DB_ERR = 'There is something wrong in database.'
 
       def validate_city(input)
         city_request = input[:city_request].call
-        if city_request.success?
-          Success(input.merge(city: city_request.value!))
-        else
-          Faliure(city_request.failure)
-        end
+        city_request.success? ? Success(input.merge(city: city_request.value)) : Failure(city_request.failure)
+      rescue StandardError => e
+        Failure(error: e, message: 'An error occurred while validating the city')
       end
 
-      def get_store_from_db(input)
-        CafeMap::Database::InfoOrm.where(city: input[:city]).map { |x| x.store[0] }
-          .then { |info| CafeMap::Response::StoreList.new(info) }
-          .then { |list| Response::ApiResult.new(status: :ok, message: list) }
-          .then { |result| Success(result) }
+      def get_info_from_db(input)
+        info = CafeMap::Database::InfoOrm.where(city: input[:city])
+        list = CafeMap::Response::InfoList.new(info)
+        result = Response::ApiResult.new(status: :ok, message: list)
+        Success(result)
+      rescue StandardError => e
+        Failure(error: e, message: 'An error occurred while fetching info from the database')
       end
-    rescue StandardError
-      Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
     end
   end
 end

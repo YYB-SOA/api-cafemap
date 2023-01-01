@@ -11,7 +11,7 @@ module CafeMap
       # step :validate_city
       step :get_info_from_db
 
-      DB_ERR = 'There is something in database.'
+      DB_ERR = 'There is something wrong in database.'
 
       # def validate_city(input)
       #   city_request = input[:city_request].call

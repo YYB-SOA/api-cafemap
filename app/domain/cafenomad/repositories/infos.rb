@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# test version: do not push
 module CafeMap
   module Repository
     # Repository for Info
@@ -31,14 +32,15 @@ module CafeMap
       def self.all_filtered_name(city)
         Database::InfoOrm.all.select { |each| each.city.include? city }.map(&:name)
       end
-
-      def self.all_filtered(city)
-        Database::InfoOrm.all.select { |each| each.city.include? city }
+      
+      def self.fetch_by_city(city_en)
+        # Only take english string as input, return the row data of matched Info
+        CafeMap::Database::InfoOrm.where(city: city_en).all
       end
 
-      def self.all_name
-        Database::InfoOrm.all.map(&:name)
-      end
+      # def self.all_filtered(city)
+      #   Database::InfoOrm.all.select { |each| each.city.include? city }
+      # end
 
       def self.all_name
         Database::InfoOrm.all.map(&:name)
@@ -75,6 +77,7 @@ module CafeMap
       def self.all_address
         Database::InfoOrm.all.map(&:address)
       end
+
       # check if the data has already in db
       def self.create(entity)
         return if find(entity)
