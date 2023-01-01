@@ -88,7 +88,7 @@ describe 'Test API routes' do
       # before do
       #   DatabaseHelper.wipe_database
       # end
-      it 'HAPPY: should be able to find and save remote data into to db' do
+      it 'HAPPY: should be able to find and save remote INFO data into to db' do
         # WHEN: the service is called with the request form object
         info_orm = CafeMap::Repository::Infos
         # Name must be String
@@ -101,7 +101,22 @@ describe 'Test API routes' do
         # Rating must be string
         arrays = [info_orm.all_quiet, info_orm.all_cheap, info_orm.all_music, info_orm.all_tasty, info_orm.all_wifi]
         assert arrays.all? { |array| array.all? { |info| info.is_a? String } }
+      end
 
+########################## stores
+      it 'HAPPY: should be able to find and save remote STORE data into to db' do
+        # WHEN: the service is called with the request form object
+        store_orm = CafeMap::Repository::Stores
+        # Name must be String
+        all_name = store_orm.all_name.map { |store| store.must_be_kind_of String }
+        all_name.all?.must_equal true
+
+        # last id must exist and should be a integer
+        store_orm.last_id.is_a?(Integer).must_equal true
+
+        # # Rating must be string
+        # arrays = [info_orm.all_quiet, info_orm.all_cheap, info_orm.all_music, info_orm.all_tasty, info_orm.all_wifi]
+        # assert arrays.all? { |array| array.all? { |info| info.is_a? String } }
         # THEN: the result should report success..
         # _(store_made.success?).must_equal true
 

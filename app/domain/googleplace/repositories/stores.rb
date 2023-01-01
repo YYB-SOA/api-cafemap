@@ -32,6 +32,9 @@ module CafeMap
         Database::StoreOrm.last
       end
 
+      def self.last_id
+        Database::StoreOrm.last.id
+      end
       # check if the data has already in db
       def self.create(entity, _info_name)
         return if find(entity)
