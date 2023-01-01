@@ -21,7 +21,7 @@ describe 'AppraiseProject Service Integration Test' do
     before do
       DatabaseHelper.wipe_database
     end
-
+  end
 #     it 'HAPPY: should give contributions for a folder of an existing project' do
 #       # GIVEN: a valid project that exists locally
 #       gh_project = CodePraise::Github::ProjectMapper

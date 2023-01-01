@@ -40,7 +40,7 @@ def kmeans_cluster(df, n_clusters=4):
 if __name__ == '__main__':
     # This method can only pass string
     citi = sys.argv[1]
-
     key_map = helpers.KEY_MAP
     df = preprocess_input_data(citi, key_map)
-    kmeans_cluster(df, n_clusters=5).to_csv(f"app/domain/clustering/temp/{citi}_clustering_out.csv")
+    output_df = kmeans_cluster(df, n_clusters=5)
+    output_df.to_json(f"app/domain/clustering/temp/{citi}_clustering_out.json")

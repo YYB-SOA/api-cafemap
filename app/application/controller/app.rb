@@ -9,7 +9,7 @@ module CafeMap
     plugin :all_verbs
     plugin :common_logger, $stderr
     plugin :status_handler
-
+    plugin :caching
     # use Rack::MethodOverride # allows HTTP verbs beyond GET/POST (e.g., DELETE)
 
     route do |routing|
@@ -17,7 +17,7 @@ module CafeMap
 
       # GET /
       routing.root do
-        message = "CafeMap API v1 at /region/ in #{App.environment} mode"
+        message = "CafeMap api/v1 at /root/ in #{App.environment} mode"
 
         result_response = Representer::HttpResponse.new(
           Response::ApiResult.new(status: :ok, message:)
@@ -32,7 +32,7 @@ module CafeMap
             # post api/v1/cafemap/random_store?city={city}
 
             routing.post do
-              puts routing.params
+              puts "api/v1/cafemap/random_store/#{routing.params}\n"
               city_req = Request::EncodedCityName.new(routing.params)
               filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
               if filtered_cafelist.failure?
@@ -42,17 +42,34 @@ module CafeMap
 
               http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
               response.status = http_response.http_status_code
+              puts filtered_cafelist.value!.message
               Representer::CafeList.new(filtered_cafelist.value!.message).to_json
             end
-
-            # routing.is do
-
-            # end
+          end
+          # post api/v1/cafemap/clusters?city={city}
+          routing.on 'clusters' do
+            routing.is do
+              routing.get do
+                # response.cache_control public: true, max_age: 600
+                city_request = Request::EncodedCityName.new(routing.params)
+                cluster_result = Service::Clustering.new.call(city_request: city_request)
+  
+                if cluster_result.failure?
+                  failed = Representer::HttpResponse.new(cluster_result.failure)
+                  routing.halt failed.http_status_code, failed.to_json
+                end
+  
+                http_response = Representer::HttpResponse.new(cluster_result.value!)
+                response.status = http_response.http_status_code
+                puts cluster_result.value!.message
+                Representer::ClusterList.new(cluster_result.value!.message).to_json
+              end
+            end
           end
           routing.is do
             # Get /api/v1/cafemap?city={city}
             routing.get do
-              # city_request = Request::EncodedCityName.new(routing.params)
+              # response.cache_control public: true, max_age: 30
               filtered_cafelist = Service::MiningCafeList.new.call(routing.params)
               if filtered_cafelist.failure?
                 failed = Representer::HttpResponse.new(filtered_cafelist.failure)

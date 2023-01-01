@@ -18,6 +18,9 @@ gem 'slim', '~> 4.1'
 gem 'puma', '~> 5'
 gem 'rack-session', '~> 0.3'
 gem 'roda', '~> 3'
+gem 'rack-cache'
+gem 'redis'
+gem 'redis-rack-cache'
 
 
 # Controllers and services
@@ -55,6 +58,7 @@ group :test do
   gem 'simplecov', '~> 0'
   gem 'vcr', '~> 6.0'
   gem 'webmock', '~> 3.0'
+  # gem "rspec"
 
   gem 'headless', '~> 2.3'
   gem 'page-object', '~> 2.3'
