@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'infos'
 require_relative '../../googleplace/repositories/stores'
+require_relative '../../cafenomad/repositories/infos'
+require_relative 'clusters'
 
 module CafeMap
   module Repository

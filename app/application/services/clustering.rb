@@ -50,7 +50,7 @@ module CafeMap
         puts input.class
         puts input[:citi]
         fh = JSON.parse(File.read(("app/domain/clustering/temp/#{input[:citi]}_clustering_out.json")))
-        delete_clustering_files('app/domain/clustering/temp')
+        # delete_clustering_files('app/domain/clustering/temp')
         fh_result = json_to_hash_array(fh)
         cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
 
@@ -79,14 +79,14 @@ module CafeMap
         return_array
       end
 
-      def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
-        deleted_names.each do |name|
-          file_pattern = /.*#{name}/
-          file_paths = Dir.glob(File.join(folder, '*'))
-          file_paths.select! { |file_path| file_path.match?(file_pattern) }
-          file_paths.each { |file_path| File.delete(file_path) }
-        end
-      end
+      # def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
+      #   deleted_names.each do |name|
+      #     file_pattern = /.*#{name}/
+      #     file_paths = Dir.glob(File.join(folder, '*'))
+      #     file_paths.select! { |file_path| file_path.match?(file_pattern) }
+      #     file_paths.each { |file_path| File.delete(file_path) }
+      #   end
+      # end
 
       def connect_database(entity)
         Repository::For.entity(entity)
