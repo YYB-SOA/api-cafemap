@@ -61,7 +61,6 @@ module CafeMap
   
                 http_response = Representer::HttpResponse.new(cluster_result.value!)
                 response.status = http_response.http_status_code
-                puts cluster_result.value!.message
                 Representer::ClusterList.new(cluster_result.value!.message).to_json
               end
             end

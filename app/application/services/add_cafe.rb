@@ -48,7 +48,7 @@ module CafeMap
       end
 
       def store_info(input)
-        info_unrecorded = input[:info_unrecorded]
+        info_unrecorded = input[:info_unrecorded] # Entity Array
         city_english = info_unrecorded[0].city
         info_unrecorded.each do |each_unrecorded|
           
