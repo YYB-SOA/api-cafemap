@@ -53,12 +53,23 @@ module CafeMap
         # delete_clustering_files('app/domain/clustering/temp')
         fh_result = json_to_hash_array(fh)
         cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
-
+        puts cluster_result
         CafeMap::Response::ClusterList.new(cluster_result)
           .then { |list| Response::ApiResult.new(status: :ok, message: list) }
           .then { |result| Success(result) }
       rescue StandardError
         Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
+      end
+
+
+      def get_db(input)
+        infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several
+        @citi = infos_data.select { |filter| filter.address.include? input[:city] }.sample.city
+        info_from_db = CafeMap::Database::InfoOrm.where(city: @citi).all
+        store_from_db = CafeMap::Database::InfoOrm.where(city: @citi).map { |x| x.store[0] }
+        { 'info_db' => info_from_db, 'store_db' => store_from_db }
+      rescue StandardError => e
+        raise "Could not find that city on CafeNomad #{e}"
       end
 
       def json_to_hash_array(fh)
