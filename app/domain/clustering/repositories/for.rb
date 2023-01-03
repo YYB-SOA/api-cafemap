@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
-require_relative 'infos'
 require_relative '../../googleplace/repositories/stores'
+require_relative '../../cafenomad/repositories/infos'
+require_relative 'clusters'
 
 module CafeMap
   module Repository
     # Finds the right repository for an entity object or class
     module For
       ENTITY_REPOSITORY = {
-        Entity::Store => Stores,
-        Entity::Info  => Infos
+        Entity::Store   => Stores,
+        Entity::Info    => Infos,
+        Entity::Cluster => Clusters
       }.freeze
 
       def self.klass(entity_klass)

@@ -2,7 +2,6 @@
 
 require 'dry-struct'
 require 'dry-types'
-require_relative '../../googleplace/entities/store'
 
 module CafeMap
   module Entity
