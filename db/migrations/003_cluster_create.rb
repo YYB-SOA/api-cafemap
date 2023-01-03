@@ -5,7 +5,8 @@ require 'sequel'
 Sequel.migration do
   change do
     create_table(:cluster) do
-      primary_key :infoid
+      primary_key :id
+      String      :infoid
       String      :name
       String      :city
       String      :wifi

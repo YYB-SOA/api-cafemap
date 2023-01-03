@@ -10,8 +10,20 @@ module CafeMap
         Database::ClusterOrm.all.map { |each| rebuild_entity(each) }
       end
 
+      def self.find(entity)
+        find_name(entity.name)
+      end
+
       def self.all_filtered_name(city)
         Database::ClusterOrm.all.select { |each| each.city.include? city }.map(&:name)
+      end
+
+      def self.delete_city(city)
+        Database::ClusterOrm.where(city: input).delete
+      end
+
+      def self.find_name(name)
+        Database::ClusterOrm.first(name:)
       end
 
       # check if the data has already in db

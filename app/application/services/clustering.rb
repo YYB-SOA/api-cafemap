@@ -39,12 +39,14 @@ module CafeMap
         df_store = df_transformer(db_hash['store_db'], 'store')
         df = df_info.inner_join(df_store, on: { id: :info_id })
         k_means_runner(@citi, df)
-        Success(input.merge(citi: @citi))
+        Success(input.merge(: @citi))
       rescue StandardError
         Failure('Something wrong in k_means_runner')
       end
 
       def read_cluster_output(input)
+
+        # 檢查看看 info db 裡的資料長度跟 cluster db 的資料長度是否吻合，吻合就不丟 queue
         sleep 1
         puts input
         puts input.class
@@ -88,6 +90,12 @@ module CafeMap
           end
         end
         return_array
+      end
+
+      def check_new_data_in_infoDB?(input)
+        info_db_len = CafeMap::Database::InfoOrm.where(city: input[:citi]).all.length
+        cluster_db_len = CafeMap::Database::ClusterOrm.where(city: input[:citi]).all.length
+        info_db_len == cluster_db_len
       end
 
       # def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
