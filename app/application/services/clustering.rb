@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# require_relative '../domain/clustering/runner/k_means_main'
+require_relative '../../domain/clustering/runner/k_means_main'
 require 'dry/transaction'
 require 'json'
 
@@ -11,10 +11,12 @@ module CafeMap
       include Dry::Transaction
 
       step :validate_city
-      step :get_info_from_db
-      step :call_kmeans_main
-      step :read_cluster_output
+      step :do_cluster
+      # step :get_info_from_db
+      # step :call_kmeans_main
+      step :get_cluster_output
       DB_ERR = 'There is something in database.'
+      PROCESSING_MSG = 'Processing the summary request'
 
       def validate_city(input)
         city_request = input[:city_request].call
@@ -25,44 +27,72 @@ module CafeMap
         end
       end
 
-      def get_info_from_db(input)
-        if (db_hash = get_db(input))
-          Success(input.merge(db_hash:))
+      def do_cluster(input)
+        CityCluster.new(input[:city])
+        if (cluster_result = CityCluster.new(input[:city]).cluster)
+          Success(input.merge(cluster_result:))
         end
-      rescue StandardError
+      rescue StandardError => e
+        puts e
         Failure('Something wrong in DB')
       end
 
-      def call_kmeans_main(input)
-        db_hash = input[:db_hash]
-        df_info = df_transformer(db_hash['info_db'], 'info')
-        df_store = df_transformer(db_hash['store_db'], 'store')
-        df = df_info.inner_join(df_store, on: { id: :info_id })
-        k_means_runner(@citi, df)
-        Success(input.merge(: @citi))
-      rescue StandardError
-        Failure('Something wrong in k_means_runner')
-      end
-
-      def read_cluster_output(input)
-
-        # 檢查看看 info db 裡的資料長度跟 cluster db 的資料長度是否吻合，吻合就不丟 queue
-        sleep 1
-        puts input
-        puts input.class
-        puts input[:citi]
-        fh = JSON.parse(File.read(("app/domain/clustering/temp/#{input[:citi]}_clustering_out.json")))
-        # delete_clustering_files('app/domain/clustering/temp')
-        fh_result = json_to_hash_array(fh)
-        cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
-        puts cluster_result
-        CafeMap::Response::ClusterList.new(cluster_result)
+      def get_cluster_output(input)
+        CafeMap::Response::ClusterList.new(input[:cluster_result])
           .then { |list| Response::ApiResult.new(status: :ok, message: list) }
           .then { |result| Success(result) }
       rescue StandardError
         Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
       end
 
+      # def get_info_from_db(input)
+      #   if (db_hash = get_db(input))
+      #     Success(input.merge(db_hash:))
+      #   end
+      # rescue StandardError
+      #   Failure('Something wrong in DB')
+      # end
+
+      # def call_kmeans_main(input)
+      #   db_hash = input[:db_hash]
+      #   df_info = df_transformer(db_hash['info_db'], 'info')
+      #   df_store = df_transformer(db_hash['store_db'], 'store')
+      #   df = df_info.inner_join(df_store, on: { id: :info_id })
+      #   # k_means_runner(@citi, df)
+      #   Success(input.merge(dataframe: df))
+      #   # Success(input.merge(citi: @citi))
+      # rescue StandardError
+      #   Failure('Something wrong in k_means_runner')
+      # end
+
+      # def request_cluster_worker(input)
+      #   return Success(input) if check_new_data_in_infoDB?(@citi) #if True 表示 cluster 結果是已經做過ㄉ
+
+      #   Messaging::Queue
+      #     .new(App.config.CLONE_QUEUE_URL, App.config)
+      #     .send(Representer::Project.new(input[:project]).to_json)
+      #   Failure(Response::ApiResult.new(status: :processing, message: PROCESSING_MSG))
+
+      #   rescue StandardError => e
+      #     print_error(e)
+      #     Failure(Response::ApiResult.new(status: :internal_error, message: CLONE_ERR))
+      #   end
+      # end
+
+      # def read_cluster_output(input)
+      #   k_means_runner(@citi, input[:dataframe])
+      #   # 檢查看看 info db 裡的資料長度跟 cluster db 的資料長度是否吻合，吻合就不丟 queue
+      #   sleep 1
+      #   fh = JSON.parse(File.read(("app/domain/clustering/temp/#{@citi}_clustering_out.json")))
+      #   # delete_clustering_files('app/domain/clustering/temp')
+      #   fh_result = json_to_hash_array(fh)
+      #   cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
+      #   CafeMap::Response::ClusterList.new(cluster_result)
+      #     .then { |list| Response::ApiResult.new(status: :ok, message: list) }
+      #     .then { |result| Success(result) }
+      # rescue StandardError
+      #   Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
+      # end
 
       def get_db(input)
         infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several

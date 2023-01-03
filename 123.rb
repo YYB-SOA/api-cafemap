@@ -32,9 +32,9 @@ require_app
 fh_result = json_to_hash_array(fh)
 cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
 # puts cluster_result.length
-cluster_result.each do |each_cluster|
-    CafeMap::Repository::For.entity(each_cluster).create(each_cluster)
-end
+# cluster_result.each do |each_cluster|
+#     CafeMap::Repository::For.entity(each_cluster).create(each_cluster)
+# end
 # puts CafeMap::Database::ClusterOrm.where(city: input).all.length
 # puts CafeMap::Database::InfoOrm.where(city: input).all.length
 def check_new_data_in_infoDB?(input)
@@ -43,4 +43,4 @@ def check_new_data_in_infoDB?(input)
     info_db_len == cluster_db_len
 end
 # CafeMap::Database::ClusterOrm.where(city: input).delete
-puts CafeMap::Database::ClusterOrm.where(city: input).all.length
+puts CafeMap::Database::InfoOrm.where(city: input).all.length
