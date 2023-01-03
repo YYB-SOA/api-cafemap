@@ -25,8 +25,9 @@ class ClusterWorker
   shoryuken_options queue: config.CLONE_QUEUE_URL, auto_delete: true
 
   def perform(_sqs_msg, request) # 理論上 request 會是一個地名字串？
-    CodePraise::GitRepo.new(project).clone
-  rescue CodePraise::GitRepo::Errors::CannotOverwriteLocalGitRepo
-    puts 'CLONE EXISTS -- ignoring request'
+    city = JSON.parse(request)["city"]
+    CafeMap::CityCluster.new(city).cluster
+  rescue StandardError
+    puts 'Cluster EXISTS -- ignoring request'
   end
 end

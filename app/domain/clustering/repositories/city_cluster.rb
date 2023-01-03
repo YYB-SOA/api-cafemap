@@ -7,43 +7,40 @@ module CafeMap
 
     def cluster
       db_hash = PersistCluster.new(@city).get_db
-      # delete_cluster_db
+      CityCluster.delete_cluster_db(db_hash['city_en'])
       df_info = df_transformer(db_hash['info_db'], 'info')
       df_store = df_transformer(db_hash['store_db'], 'store')
       df = df_info.inner_join(df_store, on: { id: :info_id })
-      puts '123'
-      puts db_hash['city_en']
       k_means_runner(db_hash['city_en'], df)
       fh = JSON.parse(File.read(("app/domain/clustering/temp/#{db_hash['city_en']}_clustering_out.json")))
       fh_result = CityCluster.json_to_hash_array(fh)
-      CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
-      #   # puts cluster_result.length
-      #   cluster_result.each do |each_cluster|
-      #     CafeMap::Repository::For.entity(each_cluster).create(each_cluster)
-      #   end
+      cluster_result = CafeMap::Cluster::ClusterMapper.new(fh_result).load_several
+      cluster_result.each do |each_cluster|
+        CafeMap::Repository::For.entity(each_cluster).create(each_cluster)
+      end
     end
 
-    def self.delete_cluster_db # 刪除 Cluster_db 舊有的（已經 Cluster 好的）資料
-      CafeMap::Database::ClusterOrm.where(city: @city_en).delete
+    def self.delete_cluster_db(city) # 刪除 Cluster_db 舊有的（已經 Cluster 好的）資料
+      CafeMap::Database::ClusterOrm.where(city:).delete
     end
 
     def self.json_to_hash_array(fh)
-        return_array = []
-        fh.each do |key1, _value1|
-          if key1 == 'id'
-            fh[key1].each do |_key2, value2|
-              temp = {}
-              temp[key1] = value2
-              return_array.append(temp)
-            end
-          else
-            return_array.each_with_index do |element, index|
-              element[key1] = fh[key1][index.to_s]
-            end
+      return_array = []
+      fh.each do |key1, _value1|
+        if key1 == 'id'
+          fh[key1].each do |_key2, value2|
+            temp = {}
+            temp[key1] = value2
+            return_array.append(temp)
+          end
+        else
+          return_array.each_with_index do |element, index|
+            element[key1] = fh[key1][index.to_s]
           end
         end
-        return_array
       end
+      return_array
+    end
   end
 
   class PersistCluster
