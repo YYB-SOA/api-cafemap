@@ -33,7 +33,7 @@ module CafeMap
           Success(input.merge(cluster_db:))
         end
       rescue StandardError => e
-        print_error(e)
+        puts e
         Failure(Response::ApiResult.new(status: :internal_error, message: CLUSTER_DB_ERR))
       end
 
@@ -41,12 +41,12 @@ module CafeMap
         return Success(input) if check_new_data_in_infoDB?(input)
 
         Messaging::Queue
-          .new(App.config.CLONE_QUEUE_URL, App.config)
+          .new(App.config.CLUSTER_QUEUE_URL, App.config)
           .send({ "city": input[:city] }.to_json)
 
         Failure(Response::ApiResult.new(status: :processing, message: PROCESSING_MSG))
       rescue StandardError => e
-        print_error(e)
+        puts e
         Failure(Response::ApiResult.new(status: :internal_error, message: CLUSTER_ERR))
       end
 
