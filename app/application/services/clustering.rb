@@ -88,16 +88,7 @@ module CafeMap
         cluster_db_len = CafeMap::Database::ClusterOrm.where(city: input[:city_en]).all.length
         info_db_len == cluster_db_len
       end
-
-      # def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
-      #   deleted_names.each do |name|
-      #     file_pattern = /.*#{name}/
-      #     file_paths = Dir.glob(File.join(folder, '*'))
-      #     file_paths.select! { |file_path| file_path.match?(file_pattern) }
-      #     file_paths.each { |file_path| File.delete(file_path) }
-      #   end
-      # end
-
+      
       def connect_database(entity)
         Repository::For.entity(entity)
       end
