@@ -65,32 +65,10 @@ module CafeMap
         infos_data.select { |filter| filter.address.include? input }.sample.city
       end
 
-      def json_to_hash_array(fh)
-        return_array = []
-        fh.each do |key1, _value1|
-          if key1 == 'id'
-            fh[key1].each do |_key2, value2|
-              temp = {}
-              temp[key1] = value2
-              return_array.append(temp)
-            end
-          else
-            return_array.each_with_index do |element, index|
-              element[key1] = fh[key1][index.to_s]
-            end
-          end
-        end
-        return_array
-      end
-
       def check_new_data_in_infoDB?(input)
         info_db_len = CafeMap::Database::InfoOrm.where(city: input[:city_en]).all.length
         cluster_db_len = CafeMap::Database::ClusterOrm.where(city: input[:city_en]).all.length
         info_db_len == cluster_db_len
-      end
-      
-      def connect_database(entity)
-        Repository::For.entity(entity)
       end
     end
   end
