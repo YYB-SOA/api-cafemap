@@ -33,7 +33,7 @@ module CafeMap
           Success(input.merge(cluster_db:))
         end
       rescue StandardError => e
-        print_error(e)
+        puts e
         Failure(Response::ApiResult.new(status: :internal_error, message: CLUSTER_DB_ERR))
       end
 
@@ -41,12 +41,12 @@ module CafeMap
         return Success(input) if check_new_data_in_infoDB?(input)
 
         Messaging::Queue
-          .new(App.config.CLONE_QUEUE_URL, App.config)
+          .new(App.config.CLUSTER_QUEUE_URL, App.config)
           .send({ "city": input[:city] }.to_json)
 
         Failure(Response::ApiResult.new(status: :processing, message: PROCESSING_MSG))
       rescue StandardError => e
-        print_error(e)
+        puts e
         Failure(Response::ApiResult.new(status: :internal_error, message: CLUSTER_ERR))
       end
 
@@ -65,41 +65,10 @@ module CafeMap
         infos_data.select { |filter| filter.address.include? input }.sample.city
       end
 
-      def json_to_hash_array(fh)
-        return_array = []
-        fh.each do |key1, _value1|
-          if key1 == 'id'
-            fh[key1].each do |_key2, value2|
-              temp = {}
-              temp[key1] = value2
-              return_array.append(temp)
-            end
-          else
-            return_array.each_with_index do |element, index|
-              element[key1] = fh[key1][index.to_s]
-            end
-          end
-        end
-        return_array
-      end
-
       def check_new_data_in_infoDB?(input)
         info_db_len = CafeMap::Database::InfoOrm.where(city: input[:city_en]).all.length
         cluster_db_len = CafeMap::Database::ClusterOrm.where(city: input[:city_en]).all.length
         info_db_len == cluster_db_len
-      end
-
-      # def delete_clustering_files(folder, deleted_names = ['clustering_out.json', 'clustering_input.txt'])
-      #   deleted_names.each do |name|
-      #     file_pattern = /.*#{name}/
-      #     file_paths = Dir.glob(File.join(folder, '*'))
-      #     file_paths.select! { |file_path| file_path.match?(file_pattern) }
-      #     file_paths.each { |file_path| File.delete(file_path) }
-      #   end
-      # end
-
-      def connect_database(entity)
-        Repository::For.entity(entity)
       end
     end
   end

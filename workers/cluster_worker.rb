@@ -22,7 +22,7 @@ class ClusterWorker
   )
 
   include Shoryuken::Worker
-  shoryuken_options queue: config.CLONE_QUEUE_URL, auto_delete: true
+  shoryuken_options queue: config.CLUSTER_QUEUE_URL, auto_delete: true
 
   def perform(_sqs_msg, request) # 理論上 request 會是一個地名字串？
     city = JSON.parse(request)["city"]
