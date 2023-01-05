@@ -6,6 +6,8 @@ require 'sequel'
 require 'yaml'
 require 'rack/session'
 require 'logger'
+require 'rack/cache'
+require 'redis-rack-cache'
 
 module CafeMap
   # Environment-specific configuration
@@ -20,6 +22,23 @@ module CafeMap
     Figaro.load
     def self.config = Figaro.env
 
+    Figaro.env.force_ssl
+    
+    # Setup Cacheing mechanism
+    configure :development do
+      use Rack::Cache,
+          verbose: true,
+          metastore: 'file:_cache/rack/meta',
+          entitystore: 'file:_cache/rack/body'
+    end
+
+    configure :production do
+      use Rack::Cache,
+          verbose: true,
+          metastore: "#{config.REDISCLOUD_URL}/0/metastore",
+          entitystore: "#{config.REDISCLOUD_URL}/0/entitystore"
+    end
+
     use Rack::Session::Cookie, secret: config.SESSION_SECRET
 
     configure :app_test do
@@ -33,7 +52,7 @@ module CafeMap
       require 'pry'; # for breakpoints
       ENV['DATABASE_URL'] = "sqlite://#{config.DB_FILENAME}"
     end
-
+    
     DB = Sequel.connect(ENV.fetch('DATABASE_URL'))
     # deliberately :reek:UncommunicativeMethodName calling method DB
     def self.DB = DB # rubocop:disable Naming/MethodName

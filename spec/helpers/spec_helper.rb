@@ -18,7 +18,6 @@ require_app
 CONFIG = YAML.safe_load(File.read('config/secrets.yml'))
 
 CAFE_TOKEN = CafeMap::App.config.CAFE_TOKEN
-
 CAFE_CORRECT = YAML.safe_load(File.read('spec/fixtures/cafe_results.yml'))
 FAKE_TOKEN = 'Fake_api'
 
@@ -63,4 +62,14 @@ def includeChecker(rebuilt, sym, ans_db )
       end
     end
     error
+end
+
+# Define a helper method to check if an element matches the condition:
+def element_matches_condition?(element, condition)
+  if element.end_with?(condition, "#{condition}縣")
+    true
+  else
+    warn "Element does not match the condition: #{element}"
+    false
+  end
 end

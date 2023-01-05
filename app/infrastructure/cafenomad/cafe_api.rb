@@ -22,10 +22,11 @@ module CafeMap
       private
 
       def jarray_to_yml(jarray)
-        store = {}
-        store['status'] = 'ok' unless jarray.nil?
-        store['amount'] = jarray.length
-        store['header'] = jarray[0].keys
+        store = {
+          'status': 'ok',
+          'amount': jarray.length,
+          'header': jarray[0].keys
+        }
 
         jarray.each do |each_store|
           cafe_name = "#{each_store['name']}{#{each_store['id'].split('-')[0]}"
@@ -36,7 +37,6 @@ module CafeMap
     end
 
     class Request # rubocop:disable Style/Documentation
-      # token here would be a cafe_api url
       def initialize(cafe_token)
         @cafe_token = cafe_token
       end

@@ -4,22 +4,29 @@ source 'https://rubygems.org'
 ruby File.read('.ruby-version').strip
 
 # Configuration and Utilities
+# gem 'activerecord'
 gem 'figaro', '~> 1.2'
+gem 'rack-test' # for testing and can also be used to diagnose in production
 gem 'rake', '~> 13.0'
-
 # PRESENTATION LAYER
-gem 'slim', '~> 4.1'
+gem 'multi_json', '~> 1.15'
+gem 'roar', '~> 1.1'
 
 # APPLICATION LAYER
 # Web Application
 gem 'puma', '~> 5'
-gem 'rack-session', '~> 0.3'
+gem 'redis-rack-cache'
 gem 'roda', '~> 3'
 
 # Controllers and services
 gem 'dry-monads', '~> 1.4'
 gem 'dry-transaction', '~> 0.13'
 gem 'dry-validation', '~> 1.7'
+
+# Caching
+gem 'rack-cache'
+gem 'rack-session', '~> 0.3'
+gem 'redis'
 
 # DOMAIN LAYER
 # Validation
@@ -33,8 +40,14 @@ gem 'http', '~> 5'
 # Database
 # gem 'hirb', '~> 0'
 # gem 'hirb-unicode', '~> 0'
-# gem 'unicode-display_width' ,'~> 1.5'
 gem 'sequel', '~> 5.49'
+# gem 'unicode-display_width', '~> 1.5'
+
+# Asynchronicity
+gem 'concurrent-ruby', '~> 1.1'
+gem 'aws-sdk-sqs', '~> 1.48'
+gem 'shoryuken', '~> 5.3'
+gem 'faye', '~> 1.4'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'
@@ -51,6 +64,7 @@ group :test do
   gem 'simplecov', '~> 0'
   gem 'vcr', '~> 6.0'
   gem 'webmock', '~> 3.0'
+  # gem "rspec"
 
   gem 'headless', '~> 2.3'
   gem 'page-object', '~> 2.3'
@@ -78,3 +92,6 @@ gem 'json'
 
 # Stat feature
 gem 'descriptive_statistics'
+gem 'rover-df'
+# gem 'subprocess'
+# gem 'pickle'

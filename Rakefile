@@ -9,27 +9,13 @@ end
 
 desc 'Run unit and integration tests'
 Rake::TestTask.new(:spec) do |t|
-  t.pattern = 'spec/*_spec.rb'
+  t.pattern = 'spec/tests/**/*_spec.rb'
   t.warning = false
 end
-
-## Haven't complete the acceptance_spec
-# desc 'Run acceptance tests'
-# task :spec_accept do
-#   puts 'NOTE: run app in test environment in another process'
-#   sh 'ruby spec/tests/acceptance/acceptance_spec.rb'
-# end
-
-
 
 desc 'Keep rerunning unit/integration tests upon changes'
 task :respec do
   sh "rerun -c 'rake spec' --ignore 'coverage/*' --ignore 'repostore/*'"
-end
-
-desc 'Run the webserver and application'
-task :run do
-  sh 'bundle exec puma'
 end
 
 desc 'Run the webserver and application and restart if code changes'
@@ -37,12 +23,16 @@ task :rerun do
   sh "rerun -c --ignore 'coverage/*' --ignore 'repostore/*' -- bundle exec puma"
 end
 
-desc 'Generates a 64 by secret for Rack::Session'
-task :new_session_secret do
-  require 'base64'
-  require 'securerandom'
-  secret = SecureRandom.random_bytes(64).then { Base64.urlsafe_encode64(_1) }
-  puts "SESSION_SECRET: #{secret}"
+namespace :run do
+  desc 'Run API in dev mode'
+  task :dev do
+    sh 'rerun -c "bundle exec puma -p 9090"'
+  end
+
+  desc 'Run API in test mode'
+  task :test do
+    sh 'RACK_ENV=test bundle exec puma -p 9090'
+  end
 end
 
 # ################################Database: Rake:db
@@ -124,6 +114,71 @@ namespace :vcr do
   task :wipe do
     sh 'rm spec/fixtures/cassettes/*.yml' do |ok, _|
       puts(ok ? 'Cassettes deleted' : 'No cassettes found')
+    end
+  end
+end
+namespace :queues do
+  task :config do
+    require 'aws-sdk-sqs'
+    require_relative 'config/environment' # load config info
+    @api = CafeMap::App
+    @sqs = Aws::SQS::Client.new(
+      access_key_id: @api.config.AWS_ACCESS_KEY_ID,
+      secret_access_key: @api.config.AWS_SECRET_ACCESS_KEY,
+      region: @api.config.AWS_REGION
+    )
+    @q_name = @api.config.CLUSTER_QUEUE
+    @q_url = @sqs.get_queue_url(queue_name: @q_name).queue_url
+
+    puts "Environment: #{@api.environment}"
+  end
+
+  desc 'Create SQS queue for worker'
+  task :create => :config do
+    @sqs.create_queue(queue_name: @q_name)
+
+    puts 'Queue created:'
+    puts "  Name: #{@q_name}"
+    puts "  Region: #{@api.config.AWS_REGION}"
+    puts "  URL: #{@q_url}"
+  rescue StandardError => e
+    puts "Error creating queue: #{e}"
+  end
+
+  desc 'Report status of queue for worker'
+  task :status => :config do
+    puts 'Queue info:'
+    puts "  Name: #{@q_name}"
+    puts "  Region: #{@api.config.AWS_REGION}"
+    puts "  URL: #{@q_url}"
+  rescue StandardError => e
+    puts "Error finding queue: #{e}"
+  end
+
+  desc 'Purge messages in SQS queue for worker'
+  task :purge => :config do
+    @sqs.purge_queue(queue_url: @q_url)
+    puts "Queue #{@q_name} purged"
+  rescue StandardError => e
+    puts "Error purging queue: #{e}"
+  end
+end
+
+namespace :worker do
+  namespace :run do
+    desc 'Run the background cluster worker in development mode'
+    task :dev => :config do
+      sh 'RACK_ENV=development bundle exec shoryuken -r ./workers/cluster_worker.rb -C ./workers/shoryuken_dev.yml'
+    end
+
+    desc 'Run the background cluster worker in testing mode'
+    task :test => :config do
+      sh 'RACK_ENV=test bundle exec shoryuken -r ./workers/cluster_worker.rb -C ./workers/shoryuken_test.yml'
+    end
+
+    desc 'Run the background cluster worker in production mode'
+    task :production => :config do
+      sh 'RACK_ENV=production bundle exec shoryuken -r ./workers/cluster_worker.rb -C ./workers/shoryuken.yml'
     end
   end
 end

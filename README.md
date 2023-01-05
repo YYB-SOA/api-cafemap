@@ -34,3 +34,37 @@ It haven't been built yet. We will build this function in the future.
 Get the users location. We will use the longitude and latitude of user to caculate the distance of the cofffee shops to recommended.
 
 
+# CafeMap Web API
+
+Web API that allows user search the local cafe store with abundant informations.
+
+## Routes
+
+### Root check
+
+`GET /`
+
+Status:
+
+- 200: API server running (happy)
+
+### Recommend a previously stored project
+
+`GET /cafemap/{city_name}/{store_name}[/{store_list}/]`
+
+Status
+
+- 200: cafestores returned (happy)
+- 404: city name or folder not found (sad)
+- 500: problem may resulted from server side, kindly clear the cookie or use newest version browser (bad)
+
+### Store interested store into cache
+
+`POST /cafemap/{city_name}/{interest}[/{store_list}/]`
+
+Status
+
+- 201: stores stored (happy)
+- 404: store or city-specified or folder not found on database  (sad)
+- 500: server error: problems storing store  (bad)
+

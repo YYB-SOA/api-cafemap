@@ -15,7 +15,7 @@ describe 'Add_Cade Service Integration Test' do
     VcrHelper.eject_vcr
   end
 
-  describe 'Retrieve and store project' do
+  describe 'Retrieve and  project' do
     before do
       DatabaseHelper.wipe_database
     end

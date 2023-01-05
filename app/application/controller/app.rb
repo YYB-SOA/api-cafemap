@@ -1,114 +1,88 @@
-# frozen_string_literal: true
+# # frozen_string_literal: true
 
 require 'roda'
-require 'slim/include'
-require 'descriptive_statistics'
 
 module CafeMap
-  # Web App
   class App < Roda
-    plugin :render, engine: 'slim', views: 'app/presentation/views_html'
-    plugin :public, root: 'app/presentation/public'
-    plugin :assets, path: 'app/presentation/assets', css: 'style.css', js: 'table_row.js'
-    plugin :common_logger, $stderr
     plugin :halt
-    plugin :all_verbs
-    plugin :status_handler
     plugin :flash
-
+    plugin :all_verbs
+    plugin :common_logger, $stderr
+    plugin :status_handler
+    plugin :caching
     # use Rack::MethodOverride # allows HTTP verbs beyond GET/POST (e.g., DELETE)
 
-    status_handler(404) do
-      view('404')
-    end
-
     route do |routing|
-      routing.assets # load CSS
       response['Content-Type'] = 'text/html; charset=utf-8'
-
-      routing.public
 
       # GET /
       routing.root do
-        session[:city] ||= []
+        message = "CafeMap api/v1 at /root/ in #{App.environment} mode"
 
-        # Load previously viewed location
-        result = Service::ListCities.new.call
-        if result.failure?
-          flash[:error] = result.failure
-        else
-          cities = result.value!
-          flash.now[:notice] = 'Add a city name to get started' if cities.none?
-          session[:city] = cities.map(&:city)
-        end
+        result_response = Representer::HttpResponse.new(
+          Response::ApiResult.new(status: :ok, message:)
+        )
 
-        view 'home'
+        response.status = result_response.http_status_code
+        result_response.to_json
       end
+      routing.on 'api/v1' do
+        routing.on 'cafemap' do
+          routing.on 'random_store' do
+            # post api/v1/cafemap/random_store?city={city}
 
-      routing.on 'region' do
-        routing.is do
-          # POST /region/
-          routing.post do
-            city_request = Forms::NewCity.new.call(routing.params)
-            info_made = Service::AddCafe.new.call(city_request)
-            if info_made.failure?
-              flash[:error] = info_made.failure
-              routing.redirect '/'
-            end
-            info = info_made.value!
-            session[:city].insert(0, info[1]).uniq!
-            routing.redirect "region/#{info[0].city}"
-          end
-        end
-
-        routing.on String do |city|
-          routing.delete do
-            session[:city].delete(city)
-          end
-
-          # GET /cafe/region
-          routing.get do
-            begin
-              filtered_info = CafeMap::Database::InfoOrm.where(city:).all
-              if filtered_info.nil?
-                flash[:error] = 'ArgumentError:nil obj returned. \n -- No cafe shop in the region-- \n'
-                routing.redirect '/'
+            routing.post do
+              puts "api/v1/cafemap/random_store/#{routing.params}\n"
+              city_req = Request::EncodedCityName.new(routing.params)
+              filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
+              if filtered_cafelist.failure?
+                failed = Representer::HttpResponse.new(filtered_cafelist.failure)
+                routing.halt failed.http_status_code, failed.to_json
               end
-            rescue StandardError => e
-              flash[:error] = "ERROR TYPE: #{e}-- Having trouble accessing database--"
-              routing.redirect '/'
+
+              http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
+              response.status = http_response.http_status_code
+              puts filtered_cafelist.value!.message
+              Representer::CafeList.new(filtered_cafelist.value!.message).to_json
             end
-
-            # Get Obj array
-            google_data = filtered_info.map(&:store)
-
-            # Get Value object
-            infostat = Views::StatInfos.new(filtered_info)
-            storestat = Views::StatStores.new(google_data)
-
-            view 'region', locals: { infostat:,
-                                     storestat: }
-
-          rescue StandardError => e
-            puts e.full_message
           end
-        end
-      end
+          # get api/v1/cafemap/clusters?city={city}
+          routing.on 'clusters' do
+            routing.is do
+              routing.get do
 
-      routing.on 'map' do
-        routing.get do
-          result = CafeMap::Service::AppraiseCafe.new.call
-          if result.failure?
-            flash[:error] = result.failure
-          else
-            infos_data = result.value!
+                request_id = [request.env, request.path, Time.now.to_f].hash
+  
+                # response.cache_control public: true, max_age: 600
+                city_request = Request::EncodedCityName.new(routing.params)
+                cluster_result = Service::Clustering.new.call(city_request:, request_id:)
+ 
+                if cluster_result.failure?
+                  failed = Representer::HttpResponse.new(cluster_result.failure)
+                  routing.halt failed.http_status_code, failed.to_json
+                end
+
+                http_response = Representer::HttpResponse.new(cluster_result.value!)
+                response.status = http_response.http_status_code
+                Representer::ClusterList.new(cluster_result.value!.message).to_json
+              end
+            end
           end
-          ip = CafeMap::UserIp::Api.new.ip
-          location = CafeMap::UserIp::Api.new.to_geoloc
-          view 'map', locals: { info: infos_data,
-                                ip:,
-                                your_lat: location[0],
-                                your_long: location[1] }
+          routing.is do
+            # Get /api/v1/cafemap?city={city}
+            routing.get do
+              # response.cache_control public: true, max_age: 30
+              filtered_cafelist = Service::MiningCafeList.new.call(routing.params)
+              if filtered_cafelist.failure?
+                failed = Representer::HttpResponse.new(filtered_cafelist.failure)
+                routing.halt failed.http_status_code, failed.to_json
+              end
+
+              http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
+              response.status = http_response.http_status_code
+              Representer::CafeList.new(filtered_cafelist.value!.message).to_json
+            end
+          end
         end
       end
     end
