@@ -56,7 +56,7 @@ module CafeMap
                 # response.cache_control public: true, max_age: 600
                 city_request = Request::EncodedCityName.new(routing.params)
                 cluster_result = Service::Clustering.new.call(city_request:, request_id:)
-
+ 
                 if cluster_result.failure?
                   failed = Representer::HttpResponse.new(cluster_result.failure)
                   routing.halt failed.http_status_code, failed.to_json
