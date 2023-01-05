@@ -41,7 +41,7 @@ module CafeMap
         puts cluster_request_json(input)
         return Success(input) if check_new_data_in_infoDB?(input)
 
-        Messaging::Queue.new(App.config.CLONE_QUEUE_URL, App.config)
+        Messaging::Queue.new(App.config.CLUSTER_QUEUE_URL, App.config)
           .send(cluster_request_json(input))
 
         Failure(Response::ApiResult.new(
