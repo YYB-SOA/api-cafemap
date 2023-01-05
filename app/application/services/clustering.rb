@@ -38,13 +38,16 @@ module CafeMap
       end
 
       def do_cluster(input)
+        puts cluster_request_json(input)
         return Success(input) if check_new_data_in_infoDB?(input)
 
-        Messaging::Queue
-          .new(App.config.CLUSTER_QUEUE_URL, App.config)
-          .send({ "city": input[:city] }.to_json)
+        Messaging::Queue.new(App.config.CLONE_QUEUE_URL, App.config)
+          .send(cluster_request_json(input))
 
-        Failure(Response::ApiResult.new(status: :processing, message: PROCESSING_MSG))
+        Failure(Response::ApiResult.new(
+                  status: :processing,
+                  message: { request_id: input[:request_id], msg: PROCESSING_MSG }
+                ))
       rescue StandardError => e
         puts e
         Failure(Response::ApiResult.new(status: :internal_error, message: CLUSTER_ERR))
@@ -69,6 +72,12 @@ module CafeMap
         info_db_len = CafeMap::Database::InfoOrm.where(city: input[:city_en]).all.length
         cluster_db_len = CafeMap::Database::ClusterOrm.where(city: input[:city_en]).all.length
         info_db_len == cluster_db_len
+      end
+
+      def cluster_request_json(input)
+        Response::ClusterRequest.new(input[:city], input[:request_id])
+          .then { Representer::ClusterRequest.new(_1) }
+          .then(&:to_json)
       end
     end
   end
