@@ -5,7 +5,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     aws-eventstream (1.2.0)
-    aws-partitions (1.686.0)
+    aws-partitions (1.687.0)
     aws-sdk-core (3.168.4)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
@@ -142,8 +142,6 @@ GEM
       minitest (~> 5.0)
     multi_json (1.15.0)
     nio4r (2.5.8)
-    nokogiri (1.13.10-x86_64-darwin)
-      racc (~> 1.4)
     nokogiri (1.13.10-x86_64-linux)
       racc (~> 1.4)
     numo-narray (0.9.2.1)
@@ -191,7 +189,7 @@ GEM
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
-    rerun (0.13.1)
+    rerun (0.14.0)
       listen (~> 3.0)
     rexml (3.2.5)
     roar (1.1.1)
@@ -232,7 +230,6 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    sqlite3 (1.5.4-x86_64-darwin)
     sqlite3 (1.5.4-x86_64-linux)
     thor (1.2.1)
     trailblazer-option (0.1.2)
@@ -240,9 +237,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
-    unicode-display_width (2.3.0)
+    unicode-display_width (2.4.2)
     vcr (6.1.0)
-    watir (7.2.1)
+    watir (7.2.2)
       regexp_parser (>= 1.2, < 3)
       selenium-webdriver (~> 4.2)
     webdrivers (5.2.0)
@@ -261,7 +258,6 @@ GEM
     zeitwerk (2.6.6)
 
 PLATFORMS
-  x86_64-darwin-21
   x86_64-linux
 
 DEPENDENCIES

@@ -9,19 +9,19 @@ require 'ostruct'
 describe 'MiningInfo Service Integration Test' do
   VcrHelper.setup_vcr
 
-  before do
-    VcrHelper.configure_vcr_for_github(recording: :none)
-  end
+  # before do
+  #   VcrHelper.configure_vcr_for_github(recording: :none)
+  # end
 
-  after do
-    VcrHelper.eject_vcr
-  end
+  # after do
+  #   VcrHelper.eject_vcr
+  # end
 
-  describe 'List Projects' do
-    before do
-      DatabaseHelper.wipe_database
-    end
-  end
+  # describe 'List Projects' do
+  #   before do
+  #     DatabaseHelper.wipe_database
+  #   end
+  # end
 
   #     it 'HAPPY: should return projects that are being watched' do
   #       # GIVEN: a valid project exists locally and is being watched
