@@ -144,6 +144,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.13.10-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.13.10-x86_64-linux)
+      racc (~> 1.4)
     numo-narray (0.9.2.1)
     page-object (2.3.1)
       page_navigation (>= 0.10)
@@ -231,6 +233,7 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
     sqlite3 (1.5.4-x86_64-darwin)
+    sqlite3 (1.5.4-x86_64-linux)
     thor (1.2.1)
     trailblazer-option (0.1.2)
     uber (0.1.0)
@@ -259,6 +262,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   aws-sdk-sqs (~> 1.48)
