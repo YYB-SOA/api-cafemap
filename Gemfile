@@ -11,7 +11,7 @@ gem 'rake', '~> 13.0'
 # PRESENTATION LAYER
 gem 'multi_json', '~> 1.15'
 gem 'roar', '~> 1.1'
-
+# gem 'nokogiri'
 # APPLICATION LAYER
 # Web Application
 gem 'puma', '~> 5'
