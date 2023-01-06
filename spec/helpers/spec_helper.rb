@@ -9,6 +9,7 @@ require 'yaml'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'vcr'
+require 'cgi'
 require 'webmock'
 require_relative '../../app/domain/cafenomad/mappers/info_mapper'
 require_relative '../../config/environment'
@@ -24,7 +25,9 @@ FAKE_TOKEN = 'Fake_api'
 ## PLACE_API
 
 # KEYWORD_FILTER = '新竹'
-CITY_DEFAULT = '新竹'
+CITY_DEFAULT = CGI.escape('新竹')
+CITY = 'city'
+PARAMS_DEFAULT = { 'city': '新竹'}
 TOKEN_NAME = 'Place_api'
 
 PLACE_TOKEN = CafeMap::App.config.PLACE_TOKEN
@@ -52,16 +55,16 @@ def homepage
   CafeMap::App.config.APP_HOST
 end
 
-def includeChecker(rebuilt, sym, ans_db )
+def includeChecker(rebuilt, sym, ans_db)
   error = true
-    rebuilt.map(&sym).each do |item|
-      unless ans_db.include?(item)
-          print("IncludeChecker: unexpected stuff happended. symbol: #{sym}\n\n")
-          error = false
-        break
-      end
-    end
-    error
+  rebuilt.map(&sym).each do |item|
+    next if ans_db.include?(item)
+
+    print("IncludeChecker: unexpected stuff happended. symbol: #{sym}\n\n")
+    error = false
+    break
+  end
+  error
 end
 
 # Define a helper method to check if an element matches the condition:

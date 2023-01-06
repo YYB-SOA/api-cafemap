@@ -11,8 +11,8 @@ module CafeMap
       step :validate_city
       step :get_info
       step :check_unrecorded
-      step :store_info
-      step :get_info_from_db
+      # step :store_info
+      # step :get_info_from_db
 
       private
 
@@ -30,6 +30,7 @@ module CafeMap
       end
 
       def get_info(input)
+        puts input[:city]
         if (filtered_cafe = cafe_from_cafenomad(input))
           Success(input.merge(filtered_infos_data: filtered_cafe))
         end

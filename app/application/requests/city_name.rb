@@ -16,7 +16,7 @@ module CafeMap
 
       # Use in API to parse incoming list requests
       def call
-        city = @params['city'].force_encoding('UTF-8')
+        city = @params[:city].dup.force_encoding('UTF-8')
         Success(city)
       rescue StandardError => e
         Failure(
