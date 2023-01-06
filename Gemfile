@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 ruby File.read('.ruby-version').strip
 
+gem "nokogiri"
 # Configuration and Utilities
 # gem 'activerecord'
 gem 'figaro', '~> 1.2'
@@ -38,7 +39,8 @@ gem 'dry-types', '~> 1'
 gem 'http', '~> 5'
 
 # Database
-
+# gem 'hirb', '~> 0'
+# gem 'hirb-unicode', '~> 0'
 gem 'sequel', '~> 5.49'
 # gem 'unicode-display_width', '~> 1.5'
 
