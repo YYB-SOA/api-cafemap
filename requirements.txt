@@ -1,4 +1,3 @@
-re==3.11
 json
 StandardScaler
 KMeans
