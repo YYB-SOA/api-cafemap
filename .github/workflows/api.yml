@@ -46,5 +46,5 @@ jobs:
           CAFE_TOKEN: ${{ secrets.CAFE_TOKEN }}
           DB_FILENAME: ${{ secrets.DB_FILENAME }}
           REPOSTORE_PATH: ${{ secrets.REPOSTORE_PATH }}
-          API_HOST: ${{ secrets.API_HOST }}
+          T: ${{ secrets.API_HOST }}
         run: bundle exec rake spec
