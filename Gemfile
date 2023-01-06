@@ -38,14 +38,15 @@ gem 'dry-types', '~> 1'
 gem 'http', '~> 5'
 
 # Database
-# gem 'hirb', '~> 0'
-# gem 'hirb-unicode', '~> 0'
+gem 'hirb', '~> 0'
+gem 'hirb-unicode', '~> 0'
 gem 'sequel', '~> 5.49'
-# gem 'unicode-display_width', '~> 1.5'
 
 # Asynchronicity
 gem 'concurrent-ruby', '~> 1.1'
 gem 'aws-sdk-sqs', '~> 1.48'
+
+# WORKERR
 gem 'shoryuken', '~> 5.3'
 gem 'faye', '~> 1.4'
 
@@ -64,7 +65,6 @@ group :test do
   gem 'simplecov', '~> 0'
   gem 'vcr', '~> 6.0'
   gem 'webmock', '~> 3.0'
-  # gem "rspec"
 
   gem 'headless', '~> 2.3'
   gem 'page-object', '~> 2.3'
