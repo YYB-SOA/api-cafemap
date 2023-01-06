@@ -283,6 +283,7 @@ DEPENDENCIES
   minitest (~> 5)
   minitest-rg (~> 5)
   multi_json (~> 1.15)
+  nokogiri
   page-object (~> 2.3)
   pg (~> 1.2)
   pry

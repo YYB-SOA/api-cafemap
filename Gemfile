@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 ruby File.read('.ruby-version').strip
+gem 'nokogiri'
 
 # Configuration and Utilities
 # gem 'activerecord'
