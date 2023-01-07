@@ -40,7 +40,6 @@ module CafeMap
     end
 
     use Rack::Session::Cookie, secret: config.SESSION_SECRET
-    config.secret_key_base = ENV["SECRET_KEY_BASE"]
 
     configure :app_test do
       require_relative '../spec/helpers/vcr_helper'
