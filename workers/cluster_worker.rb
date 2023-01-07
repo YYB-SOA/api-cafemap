@@ -30,6 +30,7 @@ module Cluster
     def perform(_sqs_msg, request)
       job = JobReporter.new(request, Worker.config) # {city:彰化, id: hash value}
       job.report(ClusterMonitor.starting_percent)
+      sleep(3)
       CafeMap::CityCluster.new(job.city).cluster do |line|
         job.report ClusterMonitor.progress(line)
       end
