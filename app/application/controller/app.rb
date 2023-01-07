@@ -32,9 +32,9 @@ module CafeMap
             # post api/v1/cafemap/random_store?city={city}
 
             routing.post do
+              
+              city_req = Request::EncodedCityName.new(routing.params)
               "123"
-              # puts "api/v1/cafemap/random_store/#{routing.params}\n"
-              # city_req = Request::EncodedCityName.new(routing.params)
               # filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
               # if filtered_cafelist.failure?
               #   failed = Representer::HttpResponse.new(filtered_cafelist.failure)
