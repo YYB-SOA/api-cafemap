@@ -9,7 +9,7 @@ module CafeMap
     plugin :all_verbs
     plugin :common_logger, $stderr
     plugin :status_handler
-    plugin :caching
+    # plugin :caching
     # use Rack::MethodOverride # allows HTTP verbs beyond GET/POST (e.g., DELETE)
 
     route do |routing|
@@ -62,8 +62,8 @@ module CafeMap
                   routing.halt failed.http_status_code, failed.to_json
                 end
 
-                http_response = Representer::HttpResponse.new(cluster_result.value!)
-                response.status = http_response.http_status_code
+                # http_response = Representer::HttpResponse.new(cluster_result.value!)
+                # response.status = http_response.http_status_code
                 Representer::ClusterList.new(cluster_result.value!.message).to_json
               end
             end
