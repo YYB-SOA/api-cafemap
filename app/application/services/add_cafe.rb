@@ -74,7 +74,7 @@ module CafeMap
         info_from_db = CafeMap::Database::InfoOrm.where(city: input[:city_eg]).all
         store_from_db = CafeMap::Database::InfoOrm.where(city: input[:city_eg]).map { |x| x.store[0] }
         CafeMap::Response::CafeList.new(info_from_db, store_from_db)
-          .then { |list| Response::ApiResult.new(status: :ok, message: list) }
+          # .then { |list| Response::ApiResult.new(status: :ok, message: list) }
           .then { |result| Success(result) }
         rescue StandardError
           Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
