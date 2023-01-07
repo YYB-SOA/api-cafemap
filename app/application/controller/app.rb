@@ -35,7 +35,7 @@ module CafeMap
               
               city_req = Request::EncodedCityName.new(routing.params)
               filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
-              filtered_cafelist.failure?
+              "#{filtered_cafelist.failure?}"
               # if filtered_cafelist.failure?
               #   failed = Representer::HttpResponse.new(filtered_cafelist.failure)
               #   routing.halt failed.http_status_code, failed.to_json
