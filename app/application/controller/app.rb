@@ -35,8 +35,9 @@ module CafeMap
               
               city_req = Request::EncodedCityName.new(routing.params)
               filtered_cafelist = Service::AddCafe.new.call(city_request: city_req)
-              infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several[0]
-              "#{infos_data}"
+              infos_data = CafeMap::CafeNomad::InfoMapper.new(App.config.CAFE_TOKEN).load_several
+              a = infos_data.select { |filter| filter.address.include? input[:city] }.shuffle[0].city
+              "#{a}"
               # if filtered_cafelist.failure?
               #   failed = Representer::HttpResponse.new(filtered_cafelist.failure)
               #   routing.halt failed.http_status_code, failed.to_json
