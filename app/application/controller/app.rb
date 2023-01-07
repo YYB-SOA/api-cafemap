@@ -40,8 +40,9 @@ module CafeMap
                 failed = Representer::HttpResponse.new(filtered_cafelist.failure)
                 routing.halt failed.http_status_code, failed.to_json
               end
-              '789'
-              # http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
+              
+              http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
+              "234"
               # response.status = http_response.http_status_code
               # puts filtered_cafelist.value!.message
               # Representer::CafeList.new(filtered_cafelist.value!.message).to_json
