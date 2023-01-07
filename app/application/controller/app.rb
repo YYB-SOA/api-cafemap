@@ -43,7 +43,8 @@ module CafeMap
               
               http_response = Representer::HttpResponse.new(filtered_cafelist.value!)
               response.status = http_response.http_status_code
-              Representer::CafeList.new(filtered_cafelist.value!.message).to_json
+              "456"
+              # Representer::CafeList.new(filtered_cafelist.value!.message).to_json
             end
           end
           # get api/v1/cafemap/clusters?city={city}
