@@ -21,6 +21,7 @@ module CafeMap
       DB_ERR = 'There is something in database.'
 
       def validate_city(input)
+        input = input.dup
         city_request = input[:city_request].call
         if city_request.success?
           Success(input.merge(city: city_request.value!))
