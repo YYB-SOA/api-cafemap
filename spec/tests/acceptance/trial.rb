@@ -51,6 +51,7 @@ describe "DataTypeTest" do
       info_hash = hash[:infos]
       puts "info_hash: #{info_hash}\n\n"
       stores_hash = hash[:stores]
+      puts "stores_hash: #{stores_hash}\n\n"
       ### infoid & name can not be nil
       info_hash.map{|row|row[:infoid]}.all? { |element| _(element).must_be_instance_of String }
       info_hash.map{|row|row[:name]}.all? { |element| _(element).must_be_instance_of String }
