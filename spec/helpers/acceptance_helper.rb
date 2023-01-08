@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-ENV['RACK_ENV'] = 'app_test'
+ENV['RACK_ENV'] ||= 'test'
+
 
 # require 'headless'
 require 'webdrivers/chromedriver'

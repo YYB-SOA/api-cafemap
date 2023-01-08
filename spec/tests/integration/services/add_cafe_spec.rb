@@ -17,7 +17,6 @@ describe 'Add_Cade Service Integration Test' do
   describe 'Retrieve cafe shop info success or not' do
     before do
       DatabaseHelper.wipe_database
-      # PARAMS_DEFAULT = {'city'=> '新竹'}
       city_request = CafeMap::Request::EncodedCityName.new({ 'city'=> '新竹' })
       @city_assign = city_request.uncode_cityname
       @store_made = CafeMap::Service::AddCafe.new.call(city_request:)

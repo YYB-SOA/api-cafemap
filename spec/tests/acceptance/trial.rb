@@ -1,66 +1,21 @@
-# frozen_string_literal: true
-
 require_relative '../../helpers/spec_helper'
 require_relative '../../helpers/vcr_helper'
 require_relative '../../helpers/database_helper'
 require_relative '../../helpers/acceptance_helper'
 require 'cgi'
 require 'rack/test'
-# abc = {'city'=> '新竹'}
-# PARAMS_DEFAULT = {'city'=> '新竹'}
-# abc = PARAMS_DEFAULT.dup
-# city_request = CafeMap::Request::EncodedCityName.new(abc)
+@input = { 'city'=> '新竹' }
 
-# puts "city_request: #{city_request}" # Success("新竹")
-# store_made = CafeMap::Service::AddCafe.new.call(city_request: city_request)
+city_request = CafeMap::Request::EncodedCityName.new(@input)
+puts "CH City Name: #{city_request.dup.uncode_cityname}"
+store_made = CafeMap::Service::AddCafe.new.call(city_request:)
+puts "outputs: #{store_made}"
+puts "outputs.success: #{store_made.success?}"
 
-# # puts "\n\n success? \n #{store_made.success?}" #true
+url_encoded_string = CGI.escape(city_request.call.value!)
+puts "\n\nurl_encoded_string: #{url_encoded_string}"
 
-# puts "\n\n method of  store_made.value!: \n #{store_made.value!.methods}"
-# puts "\n\n store_made.value:  \n #{store_made.value!}"
-
-# puts "\n\n\n"
-# puts "\n\n method of  store_made.value!: \n #{store_made.methods}"
-# puts "\n\n method of  store_made.nil?: \n #{store_made.nil?}" #false
-# puts "\n\n method of  store_made.frozen?: \n #{store_made.frozen?}" #false
-# js = CafeMap::Representer::CafeList.new(store_made.value!.message).to_json
-# hash  = eval(js)
-# info_hash = hash[:infos]
-# stores_hash = hash[:stores]
-
-#############
-# infoid =  info_hash.map{|row|row[:infoid]}
-# puts infoid.all? { |element| element.must_be_instance_of String }
-
-require 'minitest/autorun'
-
-describe 'DataTypeTest' do
-  describe 'TestCase1' do
-    it 'should test that all elements are strings' do
-      PARAMS_DEFAULT = { 'city'=> '新竹' }.freeze
-      abc = PARAMS_DEFAULT.dup
-      puts "abc: #{abc}\n\n"
-      city_request = CafeMap::Request::EncodedCityName.new(abc)
-      puts "Assigned City:#{city_request.uncode_cityname}"
-      store_made = CafeMap::Service::AddCafe.new.call(city_request:)
-      js = CafeMap::Representer::CafeList.new(store_made.value!.message).to_json
-      hash = eval(js)
-      puts "js: #{js}\n\n"
-      info_hash = hash[:infos]
-      puts "info_hash: #{info_hash}\n\n"
-      stores_hash = hash[:stores]
-      puts "stores_hash: #{stores_hash}\n\n"
-      ### infoid & name can not be nil
-      info_hash.map { |row| row[:infoid] }.all? { |element| _(element).must_be_instance_of String }
-      info_hash.map { |row| row[:name] }.all? { |element| _(element).must_be_instance_of String }
-
-      ## The cafeshop must comes from the specific city
-      info_hash.map { |row| row[:address] }.all? { |element| _(element).must_include city_request.uncode_cityname }
-      info_hash.map { |row| row[:city] }.all? { |element| _(element).must_include city_request.uncode_cityname }
-    end
-  end
-end
-# puts stores_hash.length
-# infos_entity = js["infos"]
-# stores_entity = js["stores"]
-# puts infos_entity
+post "/api/v1/cafemap/random_store?city=#{url_encoded_string}"
+    _(last_response.status).must_equal 200
+    body = JSON.parse last_response.body
+    3.times { sleep(1) and print('.') }

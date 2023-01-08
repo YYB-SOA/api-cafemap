@@ -26,7 +26,6 @@ FAKE_TOKEN = 'Fake_api'
 # KEYWORD_FILTER = '新竹'
 CITY_DEFAULT = '新竹'
 TOKEN_NAME = 'Place_api'
-PARAMS_DEFAULT = { city: '新竹' }.freeze
 PLACE_TOKEN = CafeMap::App.config.PLACE_TOKEN
 
 TEST_STORE = ["WHO'S 喜象 CAFE", 'ARTROOM14藝室', '有隻貓咖啡'].freeze
