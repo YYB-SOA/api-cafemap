@@ -29,16 +29,16 @@ store_made = CafeMap::Service::AddCafe.new.call(city_request: city_request)
 ##:frozen?, :tap, :then, :extend, :yield_self, :clone, :pretty_inspect, :method, :public_method, :singleton_method, :<=>, :define_singleton_method, :=~, :!~, :nil?, :respond_to?, :freeze, 
 # :object_id, :send, :to_enum, :enum_for, :__send__, :!, :__id__, :instance_eval, :instance_exec, :!=, :equal?]
 
-# puts "\n\n class? \n #{store_made.class}"
-# puts "\n\n value? \n #{store_made.value!}"
-# puts "\n\n value? \n #{store_made.value!}"
+puts "\n\n class? \n #{store_made.class}"
 # # puts "\n\n value? \n #{store_made.value!}"
 
 # # puts "\n\n success? \n #{store_made.success?}" #true
 
-# puts "\n\n method of  store_made.value!: \n #{store_made.value!.methods}"
+puts "\n\n method of  store_made.value!: \n #{store_made.value!.methods}"
 # puts "\n\n store_made.status:  \n #{store_made.value!.status}"
-puts "\n\n store_made.message:  \n #{store_made.value!.message}" # error: Undefined method "message"
+# puts "\n\n store_made.message:  \n #{store_made.value!.message}" # error: Undefined method "message"
 
 puts "\n\n\n"
-puts "\n\n store_made.message['infos']:  \n #{store_made.value!["infos"]}"
+puts "\n\n method of  store_made.value!: \n #{store_made.methods}"
+puts "\n\n method of  store_made.nil?: \n #{store_made.nil?}" #false
+puts "\n\n method of  store_made.frozen?: \n #{store_made.frozen?}" #false

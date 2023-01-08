@@ -16,25 +16,28 @@ describe 'Add_Cade Service Integration Test' do
   end
 
   describe 'Retrieve and  project' do
-    before do
-      DatabaseHelper.wipe_database
-    end
+    # before do
+    #   DatabaseHelper.wipe_database
+    # end
 
     it 'HAPPY: should be able to find and save remote data into to db' do
       # WHEN: the service is called with the request form object
-      city_request = CafeMap::Request::EncodedCityName.new(CITY_PARAM)
-      duplicated = city_request.dup
-      puts "duplicated: #{duplicated}"
-      store_made = CafeMap::Service::AddCafe.new.call(city_request:duplicated)
+      # PARAMS_DEFAULT = {'city'=> '新竹'}
+      abc = PARAMS_DEFAULT.dup
+      puts "\nabc: #{abc}"
+      city_request = CafeMap::Request::EncodedCityName.new(abc)
+      store_made = CafeMap::Service::AddCafe.new.call(city_request: city_request)
       _(store_made.success?).must_equal true
+      _(store_made.nil?).must_equal false
+      _(store_made.frozen?).must_equal false
+
       # Then this 2 stores supposed to be exist in database
       info_orm = CafeMap::Repository::Infos
 
-      # # THEN: the result should report success..
-      # _(store_made.success?).must_equal true
 
       # # ..and provide a info entity with the right details
-      # rebuilt = store_made.value!
+      rebuilt = store_made.value!
+      puts rebuilt
       # includeChecker(rebuilt, :name, info_orm.all_name)
       # includeChecker(rebuilt, :latitude, info_orm.all_latitude)
       # includeChecker(rebuilt, :longitude, info_orm.all_longitude)
