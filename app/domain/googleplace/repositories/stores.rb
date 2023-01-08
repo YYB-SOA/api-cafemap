@@ -23,7 +23,7 @@ module CafeMap
       def self.name
         Database::StoreOrm.all.map(&:name)
       end
-      
+
       def self.all_filtered(city)
         Database::StoreOrm.all.select { |each| each.city.include? city }
       end
@@ -35,6 +35,7 @@ module CafeMap
       def self.last_id
         Database::StoreOrm.last.id
       end
+
       # check if the data has already in db
       def self.create(entity, _info_name)
         return if find(entity)

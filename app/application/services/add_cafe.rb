@@ -52,7 +52,6 @@ module CafeMap
         info_unrecorded = input[:info_unrecorded] # Entity Array
         city_english = info_unrecorded[0].city
         info_unrecorded.each do |each_unrecorded|
-          
           # Representer::Info.new(each_unrecorded).to_json
           place_entity = CafeMap::Place::StoreMapper.new(App.config.PLACE_TOKEN,
                                                          [each_unrecorded.name]).load_several
@@ -76,8 +75,8 @@ module CafeMap
         CafeMap::Response::CafeList.new(info_from_db, store_from_db)
           .then { |list| Response::ApiResult.new(status: :ok, message: list) }
           .then { |result| Success(result) }
-        rescue StandardError
-          Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
+      rescue StandardError
+        Failure(Response::ApiResult.new(status: :internal_error, message: DB_ERR))
       end
 
       # Support methods for steps

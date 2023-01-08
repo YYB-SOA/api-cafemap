@@ -23,9 +23,9 @@ module CafeMap
 
       def jarray_to_yml(jarray)
         store = {
-          'status': 'ok',
-          'amount': jarray.length,
-          'header': jarray[0].keys
+          status: 'ok',
+          amount: jarray.length,
+          header: jarray[0].keys
         }
 
         jarray.each do |each_store|

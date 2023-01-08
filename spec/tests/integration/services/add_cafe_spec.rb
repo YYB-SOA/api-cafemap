@@ -18,12 +18,10 @@ describe 'Add_Cade Service Integration Test' do
     before do
       DatabaseHelper.wipe_database
       # PARAMS_DEFAULT = {'city'=> '新竹'}
-      # abc = PARAMS_DEFAULT.dup
-      abc = { 'city'=> '新竹' }.dup
-      city_request = CafeMap::Request::EncodedCityName.new(abc)
+      city_request = CafeMap::Request::EncodedCityName.new({ 'city'=> '新竹' })
       @city_assign = city_request.uncode_cityname
       @store_made = CafeMap::Service::AddCafe.new.call(city_request:)
-      @hash  = eval(CafeMap::Representer::CafeList.new(@store_made.value!.message).to_json)
+      @hash = eval(CafeMap::Representer::CafeList.new(@store_made.value!.message).to_json)
     end
 
     it 'HAPPY: should be able to find and save remote data into to db' do

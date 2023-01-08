@@ -78,6 +78,7 @@ module ClusterMixinRank
   def music
     @data['music']
   end
+
   def place_id
     @data['place_id']
   end

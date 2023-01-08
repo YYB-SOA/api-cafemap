@@ -4,7 +4,7 @@ module Cluster
   # Infrastructure to clone while yielding progress
   module ClusterMonitor
     Cluster_PROGRESS = {
-      'STARTED'    => 30, 
+      'STARTED'    => 30,
       'Clustering' => 30,
       'remote'     => 70,
       'Receiving'  => 85,

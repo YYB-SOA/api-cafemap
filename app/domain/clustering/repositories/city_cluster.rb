@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CafeMap
   # Maps over local and remote git repo infrastructure
   class CityCluster
@@ -20,7 +22,8 @@ module CafeMap
       end
     end
 
-    def self.delete_cluster_db(city) # 刪除 Cluster_db 舊有的（已經 Cluster 好的）資料
+    # 刪除 Cluster_db 舊有的（已經 Cluster 好的）資料
+    def self.delete_cluster_db(city)
       CafeMap::Database::ClusterOrm.where(city:).delete
     end
 
@@ -44,7 +47,8 @@ module CafeMap
   end
 
   class PersistCluster
-    def initialize(city) # city 是中文
+    # city 是中文
+    def initialize(city)
       @city = city
     end
 

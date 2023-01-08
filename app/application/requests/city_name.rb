@@ -39,6 +39,7 @@ module CafeMap
         )
       )
     end
+
     # Decode params
     def candy(param)
       Base64.urlsafe_decode64(param)

@@ -12,7 +12,7 @@ module CafeMap
         Success(cities)
       end
     rescue StandardError
-      Failure('Could not access database')
+      Failure('Sorry: Could not access database based on assigned city')
     end
   end
 end

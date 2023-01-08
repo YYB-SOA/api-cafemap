@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../helpers/spec_helper'
 require_relative '../../helpers/vcr_helper'
 require_relative '../../helpers/database_helper'
@@ -11,7 +13,6 @@ require 'rack/test'
 
 # puts "city_request: #{city_request}" # Success("新竹")
 # store_made = CafeMap::Service::AddCafe.new.call(city_request: city_request)
-
 
 # # puts "\n\n success? \n #{store_made.success?}" #true
 
@@ -27,39 +28,35 @@ require 'rack/test'
 # info_hash = hash[:infos]
 # stores_hash = hash[:stores]
 
-
-
 #############
 # infoid =  info_hash.map{|row|row[:infoid]}
 # puts infoid.all? { |element| element.must_be_instance_of String }
 
-
 require 'minitest/autorun'
 
-describe "DataTypeTest" do
-  describe "TestCase1" do
-    it "should test that all elements are strings" do
-      PARAMS_DEFAULT = {'city'=> '新竹'}
+describe 'DataTypeTest' do
+  describe 'TestCase1' do
+    it 'should test that all elements are strings' do
+      PARAMS_DEFAULT = { 'city'=> '新竹' }.freeze
       abc = PARAMS_DEFAULT.dup
       puts "abc: #{abc}\n\n"
       city_request = CafeMap::Request::EncodedCityName.new(abc)
       puts "Assigned City:#{city_request.uncode_cityname}"
-      store_made = CafeMap::Service::AddCafe.new.call(city_request: city_request)
+      store_made = CafeMap::Service::AddCafe.new.call(city_request:)
       js = CafeMap::Representer::CafeList.new(store_made.value!.message).to_json
-      hash  = eval(js)
+      hash = eval(js)
       puts "js: #{js}\n\n"
       info_hash = hash[:infos]
       puts "info_hash: #{info_hash}\n\n"
       stores_hash = hash[:stores]
       puts "stores_hash: #{stores_hash}\n\n"
       ### infoid & name can not be nil
-      info_hash.map{|row|row[:infoid]}.all? { |element| _(element).must_be_instance_of String }
-      info_hash.map{|row|row[:name]}.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:infoid] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:name] }.all? { |element| _(element).must_be_instance_of String }
 
       ## The cafeshop must comes from the specific city
-      info_hash.map{|row|row[:address]}.all? { |element| _(element).must_include city_request.uncode_cityname }
-      info_hash.map{|row|row[:city]}.all? { |element| _(element).must_include city_request.uncode_cityname }
-
+      info_hash.map { |row| row[:address] }.all? { |element| _(element).must_include city_request.uncode_cityname }
+      info_hash.map { |row| row[:city] }.all? { |element| _(element).must_include city_request.uncode_cityname }
     end
   end
 end

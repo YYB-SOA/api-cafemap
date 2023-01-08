@@ -17,11 +17,11 @@ require_relative 'database_helper'
 #     # one greater than the previous element:
 #     actual.each_cons(2).all? { |a, b| a + 1 == b }
 #   end
-  
+
 #   failure_message do |actual|
 #     "expected #{actual} to be continuous and sequential"
 #   end
-  
+
 #   failure_message_when_negated do |actual|
 #     "expected #{actual} not to be continuous and sequential"
 #   end
