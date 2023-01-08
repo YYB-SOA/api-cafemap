@@ -6,7 +6,6 @@ require_relative '../../../helpers/database_helper'
 
 describe 'Add_Cade Service Integration Test' do
   VcrHelper.setup_vcr
-
   before do
     VcrHelper.configure_vcr_for_cafe(recording: :none)
   end
@@ -15,33 +14,40 @@ describe 'Add_Cade Service Integration Test' do
     VcrHelper.eject_vcr
   end
 
-  describe 'Retrieve and  project' do
-    # before do
-    #   DatabaseHelper.wipe_database
-    # end
+  describe 'Retrieve cafe shop info success or not' do
+    before do
+      DatabaseHelper.wipe_database
+      # PARAMS_DEFAULT = {'city'=> '新竹'}
+      # abc = PARAMS_DEFAULT.dup
+      abc = { 'city'=> '新竹' }.dup
+      city_request = CafeMap::Request::EncodedCityName.new(abc)
+      @city_assign = city_request.uncode_cityname
+      @store_made = CafeMap::Service::AddCafe.new.call(city_request:)
+    end
 
     it 'HAPPY: should be able to find and save remote data into to db' do
-      # WHEN: the service is called with the request form object
-      # PARAMS_DEFAULT = {'city'=> '新竹'}
-      abc = PARAMS_DEFAULT.dup
-      puts "\nabc: #{abc}"
-      city_request = CafeMap::Request::EncodedCityName.new(abc)
-      store_made = CafeMap::Service::AddCafe.new.call(city_request: city_request)
-      _(store_made.success?).must_equal true
-      _(store_made.nil?).must_equal false
-      _(store_made.frozen?).must_equal false
+      _(@store_made.success?).must_equal true
+      _(@store_made.nil?).must_equal false
+      _(@store_made.frozen?).must_equal false
+    end
 
-      # Then this 2 stores supposed to be exist in database
-      info_orm = CafeMap::Repository::Infos
-
-
-      # # ..and provide a info entity with the right details
-      rebuilt = store_made.value!
-      puts rebuilt
-      # includeChecker(rebuilt, :name, info_orm.all_name)
-      # includeChecker(rebuilt, :latitude, info_orm.all_latitude)
-      # includeChecker(rebuilt, :longitude, info_orm.all_longitude)
-      # includeChecker(rebuilt, :address, info_orm.all_address)
+    it 'The retrieve data have to match the schema' do
+      js = CafeMap::Representer::CafeList.new(@store_made.value!.message).to_json
+      hash = eval(js)
+      info_hash = hash[:infos]
+      stores_hash = hash[:stores]
+      _(info_hash.length).must_equal stores_hash.length
+      ### infoid & name can not be nil
+      info_hash.map { |row| row[:infoid] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:name] }.all? { |element| _(element).must_be_instance_of String }
+    end
+    it 'The retrieve data must comes from the specific city' do
+      js = CafeMap::Representer::CafeList.new(@store_made.value!.message).to_json
+      hash = eval(js)
+      info_hash = hash[:infos]
+      stores_hash = hash[:stores]
+      info_hash.map { |row| row[:address] }.all? { |element| _(element).must_include @city_assign }
+      info_hash.map { |row| row[:city] }.all? { |element| _(element).must_include @city_assign }
     end
   end
 end
