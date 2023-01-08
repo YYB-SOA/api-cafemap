@@ -29,7 +29,7 @@ module CafeMap
 
       attribute :user_ratings_total, Strict::Integer
       attribute :types, Coercible::String
-      
+
       def to_attr_hash
         to_hash # except:remove keys from hash
       end

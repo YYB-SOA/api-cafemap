@@ -6,7 +6,6 @@ require_relative '../../../helpers/database_helper'
 
 describe 'Add_Cade Service Integration Test' do
   VcrHelper.setup_vcr
-
   before do
     VcrHelper.configure_vcr_for_cafe(recording: :none)
   end
@@ -15,28 +14,67 @@ describe 'Add_Cade Service Integration Test' do
     VcrHelper.eject_vcr
   end
 
-  describe 'Retrieve and  project' do
+  describe 'Retrieve cafe shop info success or not' do
     before do
       DatabaseHelper.wipe_database
+      # PARAMS_DEFAULT = {'city'=> '新竹'}
+      city_request = CafeMap::Request::EncodedCityName.new({ 'city'=> '新竹' })
+      @city_assign = city_request.uncode_cityname
+      @store_made = CafeMap::Service::AddCafe.new.call(city_request:)
+      @hash = eval(CafeMap::Representer::CafeList.new(@store_made.value!.message).to_json)
     end
 
     it 'HAPPY: should be able to find and save remote data into to db' do
-      # WHEN: the service is called with the request form object
-      city_request = CafeMap::Forms::NewCity.new.call(city_name: CITY_DEFAULT)
-      store_made = CafeMap::Service::AddCafe.new.call(city_request)
+      _(@store_made.success?).must_equal true
+      _(@store_made.nil?).must_equal false
+      _(@store_made.frozen?).must_equal false
+    end
 
-      # Then this 2 stores supposed to be exist in database
-      info_orm = CafeMap::Repository::Infos # nothing return
+    it 'Both retrieve data from different API need to build the relation successfully' do
+      info_hash = @hash[:infos]
+      stores_hash = @hash[:stores]
+      _(info_hash.length).must_equal stores_hash.length
+      ### infoid & name can not be nil
+      info_hash.map { |row| row[:infoid] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:name] }.all? { |element| _(element).must_be_instance_of String }
+    end
 
-      # THEN: the result should report success..
-      _(store_made.success?).must_equal true
+    it 'CITY_CHECK: The retrieve data comes from Cafenomad must comes from the specific city' do
+      info_hash = @hash[:infos]
+      info_hash.map { |row| row[:address] }.all? { |element| _(element).must_include @city_assign }
+      info_hash.map { |row| row[:city] }.all? { |element| _(element).must_include @city_assign }
+    end
 
-      # ..and provide a info entity with the right details
-      rebuilt = store_made.value!
-      includeChecker(rebuilt, :name, info_orm.all_name)
-      includeChecker(rebuilt, :latitude, info_orm.all_latitude)
-      includeChecker(rebuilt, :longitude, info_orm.all_longitude)
-      includeChecker(rebuilt, :address, info_orm.all_address)
+    it 'CITY_CHECK: The retrieve data comes from PlaceAPI must comes from the specific city' do
+      info_hash = @hash[:stores]
+      info_hash.map { |row| row[:compound_code] }.all? { |element| _(element).must_include @city_assign }
+    end
+
+    it 'SCHEMA_CHECK: All the rating from CafeNomad have to be STRING' do
+      info_hash = @hash[:infos]
+
+      info_hash.map { |row| row[:wifi] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:seat] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:music] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:cheap] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:tasty] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:quiet] }.all? { |element| _(element).must_be_instance_of String }
+    end
+
+    it 'SCHEMA_CHECK: All the rating from CafeNomad have to be STRING' do
+      info_hash = @hash[:infos]
+      info_hash.map { |row| row[:wifi] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:seat] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:music] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:cheap] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:tasty] }.all? { |element| _(element).must_be_instance_of String }
+      info_hash.map { |row| row[:quiet] }.all? { |element| _(element).must_be_instance_of String }
+    end
+
+    it 'SCHEMA_CHECK: All the rating from PlaceAPI' do
+      store_hash = @hash[:stores]
+      store_hash.map { |row| row[:rating] }.all? { |element| _(element).must_be_instance_of Integer }
+      store_hash.map { |row| row[:user_ratings_total] }.all? { |element| _(element).must_be_instance_of Integer }
     end
   end
 end

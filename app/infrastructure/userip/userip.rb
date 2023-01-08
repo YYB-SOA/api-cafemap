@@ -4,7 +4,7 @@ require 'net/http'
 require 'json'
 require 'geocoder'
 
-# Not sure how to get the input from web-app and response back yet. 
+# Not sure how to get the input from web-app and response back yet.
 # Temporary Masked, do not delete it.
 
 # module CafeMap

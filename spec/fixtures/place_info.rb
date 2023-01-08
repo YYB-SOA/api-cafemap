@@ -39,7 +39,7 @@ def call_placeapi_storename(clean_name, dist)
   end
 end
 
-def limited_ans_sheet_builder(source, dist, limit = true) # rubocop:disable Style/OptionalBooleanParameter, Style/OptionalBooleanParameter
+def limited_ans_sheet_builder(source, dist, limit = true) # rubocop:disable Style/OptionalBooleanParameter
   # call & filter
   cafe_raw = YAML.load_file(source)
   filtered_store = location_filter(cafe_raw, 'city', 'hsinchu')

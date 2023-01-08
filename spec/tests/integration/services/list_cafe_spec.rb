@@ -4,81 +4,26 @@ require_relative '../../../helpers/spec_helper'
 require_relative '../../../helpers/vcr_helper'
 require_relative '../../../helpers/database_helper'
 
-require 'ostruct'
-
-describe 'MiningInfo Service Integration Test' do
+describe 'List_Cafe function: Read db based on city' do
   VcrHelper.setup_vcr
+  before do
+    VcrHelper.configure_vcr_for_cafe(recording: :none)
+    city_request = CafeMap::Request::EncodedCityName.new({ 'city'=> '新竹' })
+    @city_assign = city_request.uncode_cityname
+    @filtered_cafelist = CafeMap::Service::MiningCafeList.new.call(city_request:)
+  end
 
-  # before do
-  #   VcrHelper.configure_vcr_for_github(recording: :none)
-  # end
+  after do
+    VcrHelper.eject_vcr
+  end
 
-  # after do
-  #   VcrHelper.eject_vcr
-  # end
-
-  # describe 'List Projects' do
-  #   before do
-  #     DatabaseHelper.wipe_database
-  #   end
-  # end
-
-  #     it 'HAPPY: should return projects that are being watched' do
-  #       # GIVEN: a valid project exists locally and is being watched
-  #       gh_project = CodePraise::Github::ProjectMapper
-  #         .new(GITHUB_TOKEN)
-  #         .find(USERNAME, PROJECT_NAME)
-  #       db_project = CodePraise::Repository::For.entity(gh_project)
-  #         .create(gh_project)
-
-  #       # WHEN: we request a list of all watched projects
-  #       list_request = CodePraise::Request::EncodedProjectList
-  #         .to_request(["#{USERNAME}/#{PROJECT_NAME}"])
-
-  #       result = CodePraise::Service::ListProjects
-  #         .new.call(list_request: list_request)
-
-  #       # THEN: we should see our project in the resulting list
-  #       _(result.success?).must_equal true
-  #       list = result.value!.message
-  #       _(list.projects).must_include db_project
-  #     end
-
-  #     it 'HAPPY: should not return projects that are not being watched' do
-  #       # GIVEN: a valid project exists locally but is not being watched
-  #       gh_project = CodePraise::Github::ProjectMapper
-  #         .new(GITHUB_TOKEN)
-  #         .find(USERNAME, PROJECT_NAME)
-  #       CodePraise::Repository::For.entity(gh_project)
-  #         .create(gh_project)
-
-  #       # WHEN: we request an empty list
-  #       list_request = CodePraise::Request::EncodedProjectList.to_request([])
-  #       result = CodePraise::Service::ListProjects.new.call(
-  #         list_request: list_request
-  #       )
-
-  #       # THEN: it should return an empty list
-  #       _(result.success?).must_equal true
-  #       list = result.value!.message
-  #       _(list.projects).must_equal []
-  #     end
-
-  #     it 'SAD: should not watched projects if they are not loaded' do
-  #       # GIVEN: we are watching a project that does not exist locally
-  #       list_request = CodePraise::Request::EncodedProjectList.to_request(
-  #         ["#{USERNAME}/#{PROJECT_NAME}"]
-  #       )
-
-  #       # WHEN: we request a list of all watched projects
-  #       result = CodePraise::Service::ListProjects.new.call(
-  #         list_request: list_request
-  #       )
-
-  #       # THEN: it should return an empty list
-  #       _(result.success?).must_equal true
-  #       list = result.value!.message
-  #       _(list.projects).must_equal []
-  #     end
-  #   end
+  describe 'Read DB successful or not' do
+    before do
+      DatabaseHelper.wipe_database
+    end
+    it 'Check the access of database is working or not' do
+      _(@filtered_cafelist.success?).must_equal true
+      _(@filtered_cafelist.empty?).must_equal false
+    end
+  end
 end

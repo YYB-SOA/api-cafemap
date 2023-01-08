@@ -26,7 +26,7 @@ Sequel.migration do
       Float       :rating
       Integer     :user_ratings_total
 
-      String       :types
+      String :types
 
       DateTime    :created_at
       DateTime    :updated_at

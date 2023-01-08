@@ -14,8 +14,7 @@ module CafeMap
       include Roar::Hypermedia
       include Roar::Decorator::HypermediaConsumer
       collection :clusters, extend: Representer::Cluster,
-                         class: Hash
+                            class: Hash
     end
   end
 end
-

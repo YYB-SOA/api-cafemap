@@ -5,7 +5,6 @@ module CafeMap
   module Repository
     # Repository for Info
     class Clusters
-
       def self.all
         Database::ClusterOrm.all.map { |each| rebuild_entity(each) }
       end
@@ -18,7 +17,7 @@ module CafeMap
         Database::ClusterOrm.all.select { |each| each.city.include? city }.map(&:name)
       end
 
-      def self.delete_city(city)
+      def self.delete_city(_city)
         Database::ClusterOrm.where(city: input).delete
       end
 

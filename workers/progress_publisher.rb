@@ -20,7 +20,7 @@ module Cluster
         )
       puts "(#{response.status})"
     rescue HTTP::ConnectionError => e
-      puts e  
+      puts e
       puts '(Faye server not found - progress not sent)'
     end
 

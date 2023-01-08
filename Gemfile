@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 ruby File.read('.ruby-version').strip
 
-gem "nokogiri"
+gem 'nokogiri'
 # Configuration and Utilities
 # gem 'activerecord'
 gem 'figaro', '~> 1.2'
@@ -45,10 +45,10 @@ gem 'sequel', '~> 5.49'
 # gem 'unicode-display_width', '~> 1.5'
 
 # Asynchronicity
-gem 'concurrent-ruby', '~> 1.1'
 gem 'aws-sdk-sqs', '~> 1.48'
-gem 'shoryuken', '~> 5.3'
+gem 'concurrent-ruby', '~> 1.1'
 gem 'faye', '~> 1.4'
+gem 'shoryuken', '~> 5.3'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'
@@ -94,4 +94,3 @@ gem 'json'
 # Stat feature
 gem 'descriptive_statistics'
 gem 'rover-df'
-

@@ -23,7 +23,7 @@ module CafeMap
     def self.config = Figaro.env
 
     Figaro.env.force_ssl
-    
+
     # Setup Cacheing mechanism
     configure :development do
       use Rack::Cache,
@@ -52,7 +52,7 @@ module CafeMap
       require 'pry'; # for breakpoints
       ENV['DATABASE_URL'] = "sqlite://#{config.DB_FILENAME}"
     end
-    
+
     DB = Sequel.connect(ENV.fetch('DATABASE_URL'))
     # deliberately :reek:UncommunicativeMethodName calling method DB
     def self.DB = DB # rubocop:disable Naming/MethodName

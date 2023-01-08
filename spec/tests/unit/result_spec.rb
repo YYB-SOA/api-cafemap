@@ -19,7 +19,7 @@ describe 'Unit test of Result value' do
 
   it 'should report error for invalid status' do
     _(proc do
-        CafeMap::Response::ApiResult.new(status: :stupid_status, message: 'cafemap:stupid_status')
+      CafeMap::Response::ApiResult.new(status: :stupid_status, message: 'cafemap:stupid_status')
     end).must_raise ArgumentError
   end
 end

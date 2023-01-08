@@ -5,7 +5,6 @@ require_relative 'progress_publisher'
 module Cluster
   # Reports job progress to client
   class JobReporter
-
     def initialize(request_json, config)
       cluster_request = CafeMap::Representer::ClusterRequest
         .new(OpenStruct.new)
@@ -14,9 +13,7 @@ module Cluster
       @publisher = ProgressPublisher.new(config, cluster_request.id)
     end
 
-    def city
-      @city
-    end
+    attr_reader :city
 
     def report(msg)
       @publisher.publish msg
